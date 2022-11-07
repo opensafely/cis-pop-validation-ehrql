@@ -11,7 +11,7 @@ from databuilder.tables.beta.tpp import (
 )
 
 import codelists
-from analysis.variable_lib import (
+from variable_lib import (
     has_prior_event,
     combine_codelists,
     address_as_of,
