@@ -8,7 +8,14 @@ actions:
   generate_dataset:
     run: databuilder:v0
       generate-dataset analysis/dataset_definition.py --output output/dataset.csv
-      --dummy-tables dummy_data
+      
     outputs:
       highly_sensitive:
         cohort: output/dataset.csv
+
+  generate_dummy_dataset:
+    run: databuilder:v0
+      generate-dataset analysis/simple_dataset_definition.py --output output/dataset_2.csv
+    outputs:
+      highly_sensitive:
+        cohort: output/dataset_2.csv

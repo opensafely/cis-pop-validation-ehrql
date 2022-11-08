@@ -22,6 +22,8 @@ from variable_lib import (
     practice_registration_as_of,
 )
 
+# hello world
+
 # COMBINE CODELISTS
 # contraining primary care covid events
 primary_care_covid_events = clinical_events.take(
