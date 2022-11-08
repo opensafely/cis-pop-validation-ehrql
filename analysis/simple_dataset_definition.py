@@ -16,11 +16,9 @@ dataset = Dataset()
 # Demographic variables
 dataset.sex = patients.sex
 dataset.age = age_as_of(index_date)
-dataset.has_died = has_died(index_date)
 
-# Select the study population
+# Select the study population: only living women between 2 and 120
 is_female = (dataset.sex == "female")
 is_between_2_and_120 = (dataset.age >=2) & (dataset.age <= 120)
-has_not_died = ~dataset.has_died
 
-dataset.set_population(is_female & is_between_2_and_120 & has_not_died)
+dataset.set_population(is_female & is_between_2_and_120)
