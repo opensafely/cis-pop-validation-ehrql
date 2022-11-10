@@ -10,7 +10,7 @@ from databuilder.tables.beta.tpp import (
     sgss_covid_all_tests,
 )
 
-import codelists
+import codelists_ehrql
 from variable_lib import (
     has_prior_event,
     combine_codelists,
@@ -27,9 +27,9 @@ from variable_lib import (
 primary_care_covid_events = clinical_events.take(
     clinical_events.ctv3_code.is_in(
         combine_codelists(
-            codelists.covid_primary_care_code,
-            codelists.covid_primary_care_positive_test,
-            codelists.covid_primary_care_sequelae,
+            codelists_ehrql.covid_primary_care_code,
+            codelists_ehrql.covid_primary_care_positive_test,
+            codelists_ehrql.covid_primary_care_sequelae,
         )
     )
 )
@@ -68,7 +68,7 @@ dataset.care_home_tpp = case(
 )
 
 # Patients in long-stay nursing and residential care
-dataset.care_home_code = has_prior_event(clinical_events, codelists.carehome)
+dataset.care_home_code = has_prior_event(clinical_events, codelists_ehrql.carehome)
 
 # Middle Super Output Area (MSOA)
 dataset.msoa = address.msoa_code
@@ -97,7 +97,7 @@ dataset.primary_care_covid_case_01 = primary_care_covid_events.take(
 # Emergency attendance for COVID
 dataset.covidemergency_01 = (
     emergency_care_diagnosis_matches(
-        emergency_care_attendances, codelists.covid_emergency
+        emergency_care_attendances, codelists_ehrql.covid_emergency
     )
     .take(emergency_care_attendances.arrival_date == index_date)
     .exists_for_patient()
@@ -105,7 +105,7 @@ dataset.covidemergency_01 = (
 
 # COVID hospital admission
 dataset.covidadmitted_01 = (
-    hospitalisation_diagnosis_matches(hospital_admissions, codelists.covid_icd10)
+    hospitalisation_diagnosis_matches(hospital_admissions, codelists_ehrql.covid_icd10)
     .take(hospital_admissions.admission_date == index_date)
     .take(
         hospital_admissions.admission_method.is_in(
@@ -144,7 +144,7 @@ dataset.primary_care_covid_case_14 = primary_care_covid_events.take(
 # Emergency attendance for COVID
 dataset.covidemergency_14 = (
     emergency_care_diagnosis_matches(
-        emergency_care_attendances, codelists.covid_emergency
+        emergency_care_attendances, codelists_ehrql.covid_emergency
     )
     .take(
         (emergency_care_attendances.arrival_date >= (index_date - timedelta(days=14)))
@@ -155,7 +155,7 @@ dataset.covidemergency_14 = (
 
 # COVID hospital admission
 dataset.covidadmitted_14 = (
-    hospitalisation_diagnosis_matches(hospital_admissions, codelists.covid_icd10)
+    hospitalisation_diagnosis_matches(hospital_admissions, codelists_ehrql.covid_icd10)
     .take(
         (hospital_admissions.admission_date >= (index_date - timedelta(days=14)))
         & (hospital_admissions.admission_date <= index_date)
@@ -194,7 +194,7 @@ dataset.primary_care_covid_case_ever = primary_care_covid_events.take(
 # Emergency attendance for COVID
 dataset.covidemergency_ever = (
     emergency_care_diagnosis_matches(
-        emergency_care_attendances, codelists.covid_emergency
+        emergency_care_attendances, codelists_ehrql.covid_emergency
     )
     .take((emergency_care_attendances.arrival_date <= index_date))
     .exists_for_patient()
@@ -202,7 +202,7 @@ dataset.covidemergency_ever = (
 
 # COVID hospital admission
 dataset.covidadmitted_ever = (
-    hospitalisation_diagnosis_matches(hospital_admissions, codelists.covid_icd10)
+    hospitalisation_diagnosis_matches(hospital_admissions, codelists_ehrql.covid_icd10)
     .take((hospital_admissions.admission_date <= index_date))
     .take(
         hospital_admissions.admission_method.is_in(
