@@ -9,8 +9,8 @@ from cohortextractor import (
   Measure
 )
 
-# Import codelists from codelists.py
-import codelists
+# Import codelists from codelists_cohortextractor.py
+import codelists_cohortextractor
 
 # import json module
 import json
@@ -76,7 +76,7 @@ study = StudyDefinition(
 
     # Patients in long-stay nursing and residential care
     care_home_code=patients.with_these_clinical_events(
-      codelists.carehome,
+      codelists_cohortextractor.carehome,
       on_or_before="index_date",
       returning="binary_flag",
       return_expectations={"incidence": 0.01},
@@ -185,7 +185,7 @@ study = StudyDefinition(
   
   # # Ethnicity in 6 categories
   # ethnicity = patients.with_these_clinical_events(
-  #   codelists.ethnicity,
+  #   codelists_cohortextractor.ethnicity,
   #   returning="category",
   #   find_last_match_in_period=True,
   #   include_date_of_match=False,
@@ -290,7 +290,7 @@ study = StudyDefinition(
   #     # see https://github.com/opensafely-core/cohort-extractor/pull/497 for codes
   #     # see https://docs.opensafely.org/study-def-variables/#sus for more info
   #     with_patient_classification = ["1"], # ordinary admissions only
-  #     #with_discharge_destination = codelists.discharged_to_hospital
+  #     #with_discharge_destination = codelists_cohortextractor.discharged_to_hospital
   #     date_format="YYYY-MM-DD",
   #     find_last_match_in_period=True,
   #   ), 
@@ -331,9 +331,9 @@ study = StudyDefinition(
   # positive case identification
   primary_care_covid_case_01=patients.with_these_clinical_events(
     combine_codelists( # FIXME - ask Colm about new codelists
-      codelists.covid_primary_care_code,
-      codelists.covid_primary_care_positive_test,
-      codelists.covid_primary_care_sequelae,
+      codelists_cohortextractor.covid_primary_care_code,
+      codelists_cohortextractor.covid_primary_care_positive_test,
+      codelists_cohortextractor.covid_primary_care_sequelae,
     ),
     returning="binary_flag",
     date_format="YYYY-MM-DD",
@@ -346,7 +346,7 @@ study = StudyDefinition(
     returning="binary_flag",
     date_format="YYYY-MM-DD",
     between=["index_date", "index_date"],
-    with_these_diagnoses = codelists.covid_emergency,
+    with_these_diagnoses = codelists_cohortextractor.covid_emergency,
     find_first_match_in_period=True,
   ),
   
@@ -354,7 +354,7 @@ study = StudyDefinition(
   covidadmitted_01=patients.admitted_to_hospital(
     returning="binary_flag",
     with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"],
-    with_these_diagnoses=codelists.covid_icd10,
+    with_these_diagnoses=codelists_cohortextractor.covid_icd10,
     between=["index_date", "index_date"],
     find_first_match_in_period=True,
   ),
@@ -405,9 +405,9 @@ study = StudyDefinition(
   # Positive case identification
   primary_care_covid_case_14=patients.with_these_clinical_events(
     combine_codelists( # FIXME - ask Colm about new codelists
-      codelists.covid_primary_care_code,
-      codelists.covid_primary_care_positive_test,
-      codelists.covid_primary_care_sequelae,
+      codelists_cohortextractor.covid_primary_care_code,
+      codelists_cohortextractor.covid_primary_care_positive_test,
+      codelists_cohortextractor.covid_primary_care_sequelae,
     ),
     returning="binary_flag",
     date_format="YYYY-MM-DD",
@@ -420,7 +420,7 @@ study = StudyDefinition(
     returning="binary_flag",
     date_format="YYYY-MM-DD",
     between=["index_date - 13 days", "index_date"],
-    with_these_diagnoses = codelists.covid_emergency,
+    with_these_diagnoses = codelists_cohortextractor.covid_emergency,
     find_first_match_in_period=True,
   ),
 
@@ -428,7 +428,7 @@ study = StudyDefinition(
   covidadmitted_14=patients.admitted_to_hospital(
     returning="binary_flag",
     with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"],
-    with_these_diagnoses=codelists.covid_icd10,
+    with_these_diagnoses=codelists_cohortextractor.covid_icd10,
     between=["index_date - 13 days", "index_date"],
     find_first_match_in_period=True,
   ),
@@ -478,9 +478,9 @@ study = StudyDefinition(
   # positive case identification
   primary_care_covid_case_ever=patients.with_these_clinical_events(
     combine_codelists( # FIXME - ask Colm about new codelists
-      codelists.covid_primary_care_code,
-      codelists.covid_primary_care_positive_test,
-      codelists.covid_primary_care_sequelae,
+      codelists_cohortextractor.covid_primary_care_code,
+      codelists_cohortextractor.covid_primary_care_positive_test,
+      codelists_cohortextractor.covid_primary_care_sequelae,
     ),
     returning="binary_flag",
     on_or_before="index_date",
@@ -491,7 +491,7 @@ study = StudyDefinition(
   covidemergency_ever=patients.attended_emergency_care(
     returning="binary_flag",
     on_or_before="index_date",
-    with_these_diagnoses = codelists.covid_emergency,
+    with_these_diagnoses = codelists_cohortextractor.covid_emergency,
     find_first_match_in_period=True,
   ),
   
@@ -499,7 +499,7 @@ study = StudyDefinition(
   covidadmitted_ever=patients.admitted_to_hospital(
     returning="binary_flag",
     with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"],
-    with_these_diagnoses=codelists.covid_icd10,
+    with_these_diagnoses=codelists_cohortextractor.covid_icd10,
     on_or_before="index_date",
     find_first_match_in_period=True,
   ),
