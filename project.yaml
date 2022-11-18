@@ -5,10 +5,24 @@ expectations:
 
 actions:
 
-  generate_dataset:
-    run: databuilder:v0
-      generate-dataset analysis/dataset_definition.py --output output/dataset.csv
-      --dummy-tables dummy_data
+  generate_dataset_cohortextractor:
+    run: >
+      cohortextractor:latest generate_cohort 
+        --study-definition study_definition
+        --index-date-range '2022-09-25 to 2022-09-25 by week' 
+        --output-dir 'output'
+        --output-file "output/dataset_cohortextractor.csv"
+        --output-format csv
     outputs:
       highly_sensitive:
-        cohort: output/dataset.csv
+        cohort: output/dataset_cohortextractor_2022-09-25.csv
+
+  generate_dataset_ehrql:
+    run: >
+      databuilder:v0
+        generate-dataset analysis/dataset_definition.py 
+        --output output/dataset_ehrql_2022-09-25.csv
+        --dummy-tables dummy_data
+    outputs:
+      highly_sensitive:
+        cohort: output/dataset_ehrql_2022-09-25.csv
