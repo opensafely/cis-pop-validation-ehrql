@@ -228,11 +228,16 @@ set_registered = practice_registrations.exists_for_patient()
 set_sex_fm = (dataset.sex == "female") | (dataset.sex == "male")
 set_age_ge2_le120 = (dataset.age >= 2) & (dataset.age <= 120)
 set_has_not_died = ~dataset.has_died
+set_not_care_home = ~(dataset.care_home_tpp | dataset.care_home_code)
 
 ###############################################################################
 # Apply dataset restrictions and define study population
 ###############################################################################
 
 dataset.set_population(
-    set_registered & set_sex_fm & set_age_ge2_le120 & set_has_not_died
+    set_registered
+    & set_sex_fm
+    & set_age_ge2_le120
+    & set_has_not_died
+    & set_not_care_home
 )
