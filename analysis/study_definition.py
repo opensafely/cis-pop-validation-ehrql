@@ -95,85 +95,85 @@ study = StudyDefinition(
     "index_date",
   ),
   
-  age_kids=patients.age_as_of(
-    "first_day_of_school_year(index_date)",
-  ),
+  # age_kids=patients.age_as_of(
+  #   "first_day_of_school_year(index_date)",
+  # ),
 
-  agebandCIS=patients.categorised_as(
-    {
-      "": "DEFAULT",
-      "2-11" : "age_kids>=2 AND age_kids<=11", # ONS bases this on school year (aged 2 to to year 6)
-      "12-15" : "age_kids>=12 AND age_kids<=15", # ONS bases this on school year (year 7 to year 11)
-      "16-24" : "age_kids>=16 AND age_kids<=24", # ONS bases this on school year (year 12 to aged 24)
-      "25-34" : "age>=25 AND age<=34",
-      "35-49" : "age>=35 AND age<=49",
-      "50-69" : "age>=50 AND age<=69",
-      "70+" : "age>=70",
-    },
-    return_expectations={
-      "category":{"ratios": 
-        {
-        "2-11"  : 0.1,
-        "12-15" : 0.1, 
-        "16-24" : 0.1, 
-        "25-34" : 0.1,
-        "35-49" : 0.2,
-        "50-69" : 0.2,
-        "70+"   : 0.2,
-        }
-      }
-    },
-  ),
+  # agebandCIS=patients.categorised_as(
+  #   {
+  #     "": "DEFAULT",
+  #     "2-11" : "age_kids>=2 AND age_kids<=11", # ONS bases this on school year (aged 2 to to year 6)
+  #     "12-15" : "age_kids>=12 AND age_kids<=15", # ONS bases this on school year (year 7 to year 11)
+  #     "16-24" : "age_kids>=16 AND age_kids<=24", # ONS bases this on school year (year 12 to aged 24)
+  #     "25-34" : "age>=25 AND age<=34",
+  #     "35-49" : "age>=35 AND age<=49",
+  #     "50-69" : "age>=50 AND age<=69",
+  #     "70+" : "age>=70",
+  #   },
+  #   return_expectations={
+  #     "category":{"ratios": 
+  #       {
+  #       "2-11"  : 0.1,
+  #       "12-15" : 0.1, 
+  #       "16-24" : 0.1, 
+  #       "25-34" : 0.1,
+  #       "35-49" : 0.2,
+  #       "50-69" : 0.2,
+  #       "70+"   : 0.2,
+  #       }
+  #     }
+  #   },
+  # ),
   
-  ageband5year=patients.categorised_as(
-    {
-      "": "DEFAULT",
-      "0-4"   : "age>=0 AND age<=4", 
-      "5-9"   : "age>=5 AND age<=9", 
-      "10-14" : "age>=10 AND age<=14", 
-      "15-19" : "age>=15 AND age<=19",
-      "20-24" : "age>=20 AND age<=24",
-      "25-29" : "age>=25 AND age<=29",
-      "30-34" : "age>=30 AND age<=34",
-      "35-39" : "age>=35 AND age<=39",
-      "40-44" : "age>=40 AND age<=44",
-      "45-49" : "age>=45 AND age<=49",
-      "50-54" : "age>=50 AND age<=54",
-      "55-59" : "age>=55 AND age<=59",
-      "60-64" : "age>=60 AND age<=64",
-      "65-69" : "age>=65 AND age<=69",
-      "70-74" : "age>=70 AND age<=74",
-      "75-79" : "age>=75 AND age<=79",
-      "80-84" : "age>=80 AND age<=84",
-      "85-89" : "age>=85 AND age<=89",
-      "90+" : "age>=90",
-    },
-    return_expectations={
-      "category":{"ratios": 
-        {
-        "0-4"   : 0.05,
-        "5-9"   : 0.05,
-        "10-14" : 0.05,
-        "15-19" : 0.05,
-        "20-24" : 0.05,
-        "25-29" : 0.05,
-        "30-34" : 0.05,
-        "35-39" : 0.05,
-        "40-44" : 0.05,
-        "45-49" : 0.05,
-        "50-54" : 0.1,
-        "55-59" : 0.05,
-        "60-64" : 0.05,
-        "65-69" : 0.05,
-        "70-74" : 0.05,
-        "75-79" : 0.05,
-        "80-84" : 0.05,
-        "85-89" : 0.05,
-        "90+"   : 0.05,
-        }
-      }
-    },
-  ),
+  # ageband5year=patients.categorised_as(
+  #   {
+  #     "": "DEFAULT",
+  #     "0-4"   : "age>=0 AND age<=4", 
+  #     "5-9"   : "age>=5 AND age<=9", 
+  #     "10-14" : "age>=10 AND age<=14", 
+  #     "15-19" : "age>=15 AND age<=19",
+  #     "20-24" : "age>=20 AND age<=24",
+  #     "25-29" : "age>=25 AND age<=29",
+  #     "30-34" : "age>=30 AND age<=34",
+  #     "35-39" : "age>=35 AND age<=39",
+  #     "40-44" : "age>=40 AND age<=44",
+  #     "45-49" : "age>=45 AND age<=49",
+  #     "50-54" : "age>=50 AND age<=54",
+  #     "55-59" : "age>=55 AND age<=59",
+  #     "60-64" : "age>=60 AND age<=64",
+  #     "65-69" : "age>=65 AND age<=69",
+  #     "70-74" : "age>=70 AND age<=74",
+  #     "75-79" : "age>=75 AND age<=79",
+  #     "80-84" : "age>=80 AND age<=84",
+  #     "85-89" : "age>=85 AND age<=89",
+  #     "90+" : "age>=90",
+  #   },
+  #   return_expectations={
+  #     "category":{"ratios": 
+  #       {
+  #       "0-4"   : 0.05,
+  #       "5-9"   : 0.05,
+  #       "10-14" : 0.05,
+  #       "15-19" : 0.05,
+  #       "20-24" : 0.05,
+  #       "25-29" : 0.05,
+  #       "30-34" : 0.05,
+  #       "35-39" : 0.05,
+  #       "40-44" : 0.05,
+  #       "45-49" : 0.05,
+  #       "50-54" : 0.1,
+  #       "55-59" : 0.05,
+  #       "60-64" : 0.05,
+  #       "65-69" : 0.05,
+  #       "70-74" : 0.05,
+  #       "75-79" : 0.05,
+  #       "80-84" : 0.05,
+  #       "85-89" : 0.05,
+  #       "90+"   : 0.05,
+  #       }
+  #     }
+  #   },
+  # ),
   
   sex=patients.sex(
     return_expectations={

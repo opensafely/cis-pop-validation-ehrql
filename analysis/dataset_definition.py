@@ -17,7 +17,7 @@ from variable_lib import (
     address_as_of,
     age_as_of,
     emergency_care_diagnosis_matches,
-    has_died,
+    died_as_of,
     hospitalisation_diagnosis_matches,
     practice_registration_as_of,
 )
@@ -60,15 +60,15 @@ prior_tests = sgss_covid_all_tests.take(
 # Demographic variables
 dataset.sex = patients.sex
 dataset.age = age_as_of(index_date)
-dataset.has_died = has_died(index_date)
+has_died = died_as_of(index_date)
 
 # TPP care home flag
-dataset.care_home_tpp = case(
+care_home_tpp = case(
     when(address.care_home_is_potential_match).then(True), default=False
 )
 
 # Patients in long-stay nursing and residential care
-dataset.care_home_code = has_prior_event(clinical_events, codelists_ehrql.carehome)
+care_home_code = has_prior_event(clinical_events, codelists_ehrql.carehome)
 
 # Middle Super Output Area (MSOA)
 dataset.msoa = address.msoa_code
@@ -227,8 +227,8 @@ dataset.any_infection_or_disease_ever = (
 set_registered = practice_registrations.exists_for_patient()
 set_sex_fm = (dataset.sex == "female") | (dataset.sex == "male")
 set_age_ge2_le120 = (dataset.age >= 2) & (dataset.age <= 120)
-set_has_not_died = ~dataset.has_died
-set_not_care_home = ~(dataset.care_home_tpp | dataset.care_home_code)
+set_has_not_died = ~has_died
+set_not_care_home = ~(care_home_tpp | care_home_code)
 
 ###############################################################################
 # Apply dataset restrictions and define study population
