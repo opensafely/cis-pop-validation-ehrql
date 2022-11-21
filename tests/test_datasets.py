@@ -1,17 +1,21 @@
 # To test dataset definition run the following command in the terminal:
-# pytest tests/test_dataset_definition.py
+# pytest tests/test_datasets.py
 import os
 
 import pandas as pd
 
 
+# Load datasets
+cwd = os.getcwd()
+df_cohortextractor = pd.read_csv(f"{cwd}/output/dataset_cohortextractor_2022-09-25.csv")
+df_ehrql = pd.read_csv(f"{cwd}/output/dataset_ehrql_2022-09-25.csv")
+
+
+# Test dataset definition works as intended with dummy data
 def test_dataset_definition():
     # arrange
-    cwd = os.getcwd()
-    df_output = pd.read_csv(f"{cwd}/output/dataset_ehrql_2022-09-25.csv")
-
     # act
-    pt7 = df_output.iloc[0].to_dict()
+    pt7 = df_ehrql.iloc[0].to_dict()
 
     # assert
     assert pt7 == {
@@ -40,3 +44,14 @@ def test_dataset_definition():
         "any_infection_or_disease_14": "F",
         "any_infection_or_disease_ever": "T",
     }
+
+
+# Test that column names are identical across ehrQL and cohort extractor
+def test_dataset_columns():
+    # arrange
+    # act
+    cols_cohortextractor = df_cohortextractor.columns
+    cols_ehrql = df_ehrql.columns
+
+    # assert
+    sorted(cols_cohortextractor) == sorted(cols_ehrql)
