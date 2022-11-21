@@ -27,7 +27,7 @@ def any_of(conditions):
 
 
 def age_as_of(date):
-    return schema.patients.date_of_birth.difference_in_years(date)
+    return (date - schema.patients.date_of_birth).years
 
 
 # TODO this is not exactly the same as died_from_any_cause().
