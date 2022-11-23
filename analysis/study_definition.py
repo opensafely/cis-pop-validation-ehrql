@@ -53,40 +53,38 @@ study = StudyDefinition(
       AND 
       msoa
     """,
-    
-    # we define baseline variables on the day _before_ the study date
-    registered=patients.registered_as_of(
-      "index_date",
-    ),
-    has_died=patients.died_from_any_cause(
-      on_or_before="index_date",
-      returning="binary_flag",
-    ), 
-    
-    # patients in care or nursing homes according to patient address / residence type look up
-    care_home_tpp=patients.care_home_status_as_of(
-      "index_date",
-      categorised_as={
-          "care_or_nursing_home": "IsPotentialCareHome",
-          "": "DEFAULT",  # use empty string
-      },
-      return_expectations={
-          "category": {"ratios": {"care_or_nursing_home": 0.05, "": 0.95 }, },
-          "incidence": 1,
-      },
-    ),
-
-    # Patients in long-stay nursing and residential care
-    care_home_code=patients.with_these_clinical_events(
-      codelists_cohortextractor.carehome,
-      on_or_before="index_date",
-      returning="binary_flag",
-      return_expectations={"incidence": 0.01},
-    ),
-    
-    startdate = patients.fixed_value(start_date),
-    enddate = patients.fixed_value(end_date),
   ),
+    
+  # we define baseline variables on the day _before_ the study date
+  registered=patients.registered_as_of(
+    "index_date",
+  ),
+  has_died=patients.died_from_any_cause(
+    on_or_before="index_date",
+    returning="binary_flag",
+  ), 
+  
+  # patients in care or nursing homes according to patient address / residence type look up
+  care_home_tpp=patients.care_home_status_as_of(
+    "index_date",
+    categorised_as={
+        "care_or_nursing_home": "IsPotentialCareHome",
+        "": "DEFAULT",  # use empty string
+    },
+    return_expectations={
+        "category": {"ratios": {"care_or_nursing_home": 0.05, "": 0.95 }, },
+        "incidence": 1,
+    },
+  ),
+
+  # Patients in long-stay nursing and residential care
+  care_home_code=patients.with_these_clinical_events(
+    codelists_cohortextractor.carehome,
+    on_or_before="index_date",
+    returning="binary_flag",
+    return_expectations={"incidence": 0.01},
+  ),
+    
   
   
   ###############################################################################
