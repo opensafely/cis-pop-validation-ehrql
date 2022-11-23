@@ -37,7 +37,9 @@ study = StudyDefinition(
   index_date = start_date,
   
   # This line defines the study population
-  population=patients.satisfying(
+  population=patients.all(),
+
+  included=patients.satisfying(
     """
       registered
       AND
