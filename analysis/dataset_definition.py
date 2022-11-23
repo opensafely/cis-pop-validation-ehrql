@@ -243,3 +243,21 @@ dataset.set_population(
     & set_not_care_home
     & set_msoa_not_null
 )
+
+
+# New temporary dataset to capture the individual components of the population
+# definition for comparison with cohortextractor
+new_dataset = Dataset()
+new_dataset.set_population(patients.exists_for_patient())
+
+new_dataset.registered = set_registered
+new_dataset.has_died = has_died
+new_dataset.care_home_tpp = care_home_tpp
+new_dataset.care_home_code = care_home_code
+new_dataset.age = dataset.age
+new_dataset.sex = dataset.sex
+new_dataset.msoa = dataset.msoa
+new_dataset.included = dataset.population
+
+# Overwrite the origianl dataset with our temporary one
+dataset = new_dataset
