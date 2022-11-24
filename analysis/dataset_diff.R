@@ -54,11 +54,8 @@ df_summary <- df_outputs %>%
     sd_age = round(median(age, na.rm = TRUE), .1),
     unique_msoa = dplyr::n_distinct(msoa),
     sum_has_died = sum(has_died, na.rm = TRUE),
-    missing_has_died = sum(is.na(has_died)),
     sum_care_home_tpp = sum(care_home_tpp == "care_or_nursing_home" | care_home_tpp == "T", na.rm = TRUE),
-    missing_care_home_tpp = sum(is.na(care_home_tpp)),
     care_home_code = sum(care_home_code, na.rm = TRUE),
-    missing_care_home_code = sum(is.na(care_home_code)),
     sum_included = sum(included, na.rm = TRUE)
   )
 
@@ -74,11 +71,8 @@ df_comparison <- df_summary %>%
     sd_age,
     unique_msoa,
     sum_has_died,
-    missing_has_died,
     sum_care_home_tpp,
-    missing_care_home_tpp,
     care_home_code,
-    missing_care_home_code,
     sum_included
   ), names_to = "comparison") %>%
   tidyr::pivot_wider(
