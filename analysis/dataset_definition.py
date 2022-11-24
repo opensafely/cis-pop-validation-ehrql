@@ -8,6 +8,7 @@ from databuilder.tables.beta.tpp import (
     patients,
     practice_registrations,
     sgss_covid_all_tests,
+    ons_deaths,
 )
 
 import codelists_ehrql
@@ -17,7 +18,6 @@ from variable_lib import (
     address_as_of,
     age_as_of,
     emergency_care_diagnosis_matches,
-    died_as_of,
     hospitalisation_diagnosis_matches,
     practice_registration_as_of,
 )
@@ -37,7 +37,9 @@ primary_care_covid_events = clinical_events.take(
 # Set index date
 # TODO this is just an example for testing, something like --index-date-range
 # needs to be added https://github.com/opensafely-core/databuilder/issues/741
-index_date = date(2022, 9, 25)
+# index_date = date(2022, 9, 25)
+index_date = date(2020, 4, 26)
+
 
 # Create dataset
 dataset = Dataset()
@@ -60,7 +62,7 @@ prior_tests = sgss_covid_all_tests.take(
 # Demographic variables
 dataset.sex = patients.sex
 dataset.age = age_as_of(index_date)
-has_died = died_as_of(index_date)
+has_died = ons_deaths.take(ons_deaths.date <= index_date).exists_for_patient()
 
 # TPP care home flag
 care_home_tpp = case(
@@ -68,7 +70,7 @@ care_home_tpp = case(
 )
 
 # Patients in long-stay nursing and residential care
-care_home_code = has_prior_event(clinical_events, codelists_ehrql.carehome)
+care_home_code = has_prior_event(prior_events, codelists_ehrql.carehome)
 
 # Middle Super Output Area (MSOA)
 dataset.msoa = address.msoa_code
