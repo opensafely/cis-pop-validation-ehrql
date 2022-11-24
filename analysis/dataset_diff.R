@@ -11,45 +11,38 @@ df_outputs <- purrr::map_dfr(dir_outputs,
   readr::read_csv,
   .id = "file_name",
   col_types = list(
+    patient_id = readr::col_integer(),
+    registered = readr::col_logical(),
+    sex = readr::col_character(),
     age = readr::col_double(),
-    sex = readr::col_factor(),
-    msoa = readr::col_factor(),
-    stp = readr::col_factor(),
-    region = readr::col_factor(),
-    postest_01 = readr::col_logical(),
-    primary_care_covid_case_01 = readr::col_logical(),
-    covidemergency_01 = readr::col_logical(),
-    covidadmitted_01 = readr::col_logical(),
-    any_infection_or_disease_01 = readr::col_logical(),
-    postest_14 = readr::col_logical(),
-    primary_care_covid_case_14 = readr::col_logical(),
-    covidemergency_14 = readr::col_logical(),
-    covidadmitted_14 = readr::col_logical(),
-    any_infection_or_disease_14 = readr::col_logical(),
-    postest_ever = readr::col_logical(),
-    primary_care_covid_case_ever = readr::col_logical(),
-    covidemergency_ever = readr::col_logical(),
-    covidadmitted_ever = readr::col_logical(),
-    any_infection_or_disease_ever = readr::col_logical()
+    msoa = readr::col_logical(),
+    has_died = readr::col_logical(),
+    care_home_tpp = readr::col_logical(),
+    care_home_code = readr::col_logical(),
+    included = readr::col_logical()
   )
-)
+) %>%
+  dplyr::relocate(
+    patient_id, registered, sex, age, msoa, has_died,
+    care_home_tpp, care_home_code, included
+  ) %>%
+  dplyr::arrange(patient_id)
 
 # Extract opensafely method (cohortextractor vs ehrql) from file name
 # This currently assumes that there is only 1 file for each method
 # TODO: It might be helpful to also extract the date from the file name
-df_outputs <- df_outputs %>%
-  dplyr::mutate(opensafely = stringr::str_extract(
-    file_name,
-    "cohortextractor|ehrql"
-  ),
-  index_date = stringr::str_extract(
-    file_name,
-    "[:digit:]{4}-[:digit:]{2}-[:digit:]{2}")
-  )
+pattern_opensafely <- "cohortextractor|ehrql"
+pattern_date <- "[:digit:]{4}-[:digit:]{2}-[:digit:]{2}"
+
+df_outputs <- dplyr::mutate(df_outputs,
+  opensafely = stringr::str_extract(file_name, pattern_opensafely),
+  index_date = stringr::str_extract(file_name, pattern_date)
+)
 
 
 # Calculate summary statistics by group
 df_summary <- df_outputs %>%
+  dplyr::select(-file_name) %>%
   dplyr::group_by(opensafely, index_date) %>%
   dplyr::summarise(
     n = dplyr::n(),
@@ -60,25 +53,14 @@ df_summary <- df_outputs %>%
     median_age = median(age, na.rm = TRUE),
     sd_age = round(median(age, na.rm = TRUE), .1),
     unique_msoa = dplyr::n_distinct(msoa),
-    unique_stp = dplyr::n_distinct(stp),
-    unique_region = dplyr::n_distinct(region),
-    sum_postest_01 = sum(postest_01, na.rm = TRUE),
-    sum_primary_care_covid_case_01 = sum(primary_care_covid_case_01, na.rm = TRUE),
-    sum_covidemergency_01 = sum(covidemergency_01, na.rm = TRUE),
-    sum_covidadmitted_01 = sum(covidadmitted_01, na.rm = TRUE),
-    sum_any_infection_or_disease_01 = sum(any_infection_or_disease_01, na.rm = TRUE),
-    sum_postest_14 = sum(postest_14, na.rm = TRUE),
-    sum_primary_care_covid_case_14 = sum(primary_care_covid_case_14, na.rm = TRUE),
-    sum_covidemergency_14 = sum(covidemergency_14, na.rm = TRUE),
-    sum_covidadmitted_14 = sum(covidadmitted_14, na.rm = TRUE),
-    sum_any_infection_or_disease_14 = sum(any_infection_or_disease_14, na.rm = TRUE),
-    sum_postest_ever = sum(postest_ever, na.rm = TRUE),
-    sum_primary_care_covid_case_ever = sum(primary_care_covid_case_ever, na.rm = TRUE),
-    sum_covidemergency_ever = sum(covidemergency_ever, na.rm = TRUE),
-    sum_covidadmitted_ever = sum(covidadmitted_ever, na.rm = TRUE),
-    sum_any_infection_or_disease_ever = sum(any_infection_or_disease_ever, na.rm = TRUE)
+    sum_has_died = sum(has_died, na.rm = TRUE),
+    missing_has_died = sum(is.na(has_died)),
+    sum_care_home_tpp = sum(care_home_tpp, na.rm = TRUE),
+    missing_care_home_tpp = sum(is.na(care_home_tpp)),
+    care_home_code = sum(care_home_code, na.rm = TRUE),
+    missing_care_home_code = sum(is.na(care_home_code)),
+    sum_included = sum(included, na.rm = TRUE)
   )
-
 
 # Create final dataframe for comparison
 df_comparison <- df_summary %>%
@@ -91,23 +73,13 @@ df_comparison <- df_summary %>%
     median_age,
     sd_age,
     unique_msoa,
-    unique_stp,
-    unique_region,
-    sum_postest_01,
-    sum_primary_care_covid_case_01,
-    sum_covidemergency_01,
-    sum_covidadmitted_01,
-    sum_any_infection_or_disease_01,
-    sum_postest_14,
-    sum_primary_care_covid_case_14,
-    sum_covidemergency_14,
-    sum_covidadmitted_14,
-    sum_any_infection_or_disease_14,
-    sum_postest_ever,
-    sum_primary_care_covid_case_ever,
-    sum_covidemergency_ever,
-    sum_covidadmitted_ever,
-    sum_any_infection_or_disease_ever
+    sum_has_died,
+    missing_has_died,
+    sum_care_home_tpp,
+    missing_care_home_tpp,
+    care_home_code,
+    missing_care_home_code,
+    sum_included
   ), names_to = "comparison") %>%
   tidyr::pivot_wider(
     id_cols = c(comparison, index_date),
@@ -118,7 +90,7 @@ df_comparison <- df_summary %>%
     cohortextractor = round(cohortextractor, -1),
     ehrql = round(ehrql, -1)
   ) %>%
-  dplyr::mutate(raw_diff = abs(cohortextractor - ehrql))
+  dplyr::mutate(raw_diff = cohortextractor - ehrql)
 
 
 # Write dataframe for comparison to dataset_diff.csv
