@@ -17,7 +17,7 @@ df_outputs <- purrr::map_dfr(dir_outputs,
     age = readr::col_double(),
     msoa = readr::col_logical(),
     has_died = readr::col_logical(),
-    care_home_tpp = readr::col_logical(),
+    care_home_tpp = readr::col_character(),
     care_home_code = readr::col_logical(),
     included = readr::col_logical()
   )
@@ -55,7 +55,7 @@ df_summary <- df_outputs %>%
     unique_msoa = dplyr::n_distinct(msoa),
     sum_has_died = sum(has_died, na.rm = TRUE),
     missing_has_died = sum(is.na(has_died)),
-    sum_care_home_tpp = sum(care_home_tpp, na.rm = TRUE),
+    sum_care_home_tpp = sum(care_home_tpp == "care_or_nursing_home" | care_home_tpp == "T", na.rm = TRUE),
     missing_care_home_tpp = sum(is.na(care_home_tpp)),
     care_home_code = sum(care_home_code, na.rm = TRUE),
     missing_care_home_code = sum(is.na(care_home_code)),
