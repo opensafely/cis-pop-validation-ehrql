@@ -27,12 +27,12 @@ actions:
       highly_sensitive:
         cohort: output/dataset_ehrql_2022-09-25.csv
  
-  # calculate_dataset_diff:
-  #   run: >
-  #     r:latest analysis/dataset_diff.R
-  #   needs:
-  #     - generate_dataset_cohortextractor
-  #     - generate_dataset_ehrql
-  #   outputs:
-  #     moderately_sensitive:
-  #       cohort: output/diff/dataset_diff_summary.csv
+  calculate_dataset_diff:
+    run: >
+      r:latest analysis/dataset_diff.R
+    needs:
+      - generate_dataset_cohortextractor
+      - generate_dataset_ehrql
+    outputs:
+      moderately_sensitive:
+        cohort: output/diff/dataset_diff_summary.csv
