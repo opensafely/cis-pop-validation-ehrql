@@ -37,9 +37,7 @@ primary_care_covid_events = clinical_events.take(
 # Set index date
 # TODO this is just an example for testing, something like --index-date-range
 # needs to be added https://github.com/opensafely-core/databuilder/issues/741
-# index_date = date(2022, 9, 25)
-index_date = date(2020, 4, 26)
-
+index_date = date(2022, 9, 25)
 
 # Create dataset
 dataset = Dataset()

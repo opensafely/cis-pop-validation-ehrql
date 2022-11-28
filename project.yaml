@@ -9,9 +9,8 @@ actions:
     run: >
       cohortextractor:latest generate_cohort 
         --study-definition study_definition
-        --index-date-range '2022-09-25 to 2022-09-25 by week' 
         --output-dir 'output'
-        --output-file "output/dataset_cohortextractor.csv"
+        --output-file "output/dataset_cohortextractor_2022-09-25.csv"
         --output-format csv
     outputs:
       highly_sensitive:

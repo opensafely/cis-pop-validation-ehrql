@@ -16,25 +16,25 @@ import codelists_cohortextractor
 import json
 
 # import study dates defined in "./analysis/lib/study-dates.R" script
-with open("./analysis/lib/study-dates.json") as f:
-  study_dates = json.load(f)
+# with open("./analysis/lib/study-dates.json") as f:
+#   study_dates = json.load(f)
 
-start_date = study_dates["start_date"]
-end_date = study_dates["end_date"]
+# start_date = study_dates["start_date"]
+# end_date = study_dates["end_date"]
 
 # Specify study definition
 study = StudyDefinition(
   
   # Configure the expectations framework
   default_expectations={
-    "date": {"earliest": "2020-01-01", "latest": end_date},
+    "date": {"earliest": "2020-01-01", "latest": "2022-10-02"},
     "rate": "uniform",
     "incidence": 0.2,
     "int": {"distribution": "normal", "mean": 1000, "stddev": 100},
     "float": {"distribution": "normal", "mean": 25, "stddev": 5},
   },
   
-  index_date = start_date,
+  index_date = "2022-09-25",
   
   # This line defines the study population
   population=patients.all(),
