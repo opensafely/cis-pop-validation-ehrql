@@ -79,14 +79,12 @@ df_comparison <- df_summary %>%
     n_included,
     n_included_missing
   ), names_to = "comparison") %>%
+  dplyr::mutate(
+    value = round(value, -1)) %>%
   tidyr::pivot_wider(
     id_cols = c(comparison, index_date),
     names_from = opensafely,
     values_from = value
-  ) %>%
-  dplyr::mutate(
-    cohortextractor = round(cohortextractor, -1),
-    ehrql = round(ehrql, -1)
   ) %>%
   dplyr::mutate(raw_diff = cohortextractor - ehrql)
 
