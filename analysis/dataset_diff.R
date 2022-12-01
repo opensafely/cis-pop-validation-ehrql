@@ -39,41 +39,45 @@ df_outputs <- dplyr::mutate(df_outputs,
   index_date = stringr::str_extract(file_name, pattern_date)
 )
 
-
 # Calculate summary statistics by group
 df_summary <- df_outputs %>%
   dplyr::select(-file_name) %>%
   dplyr::group_by(opensafely, index_date) %>%
   dplyr::summarise(
     n = dplyr::n(),
-    n_female = sum(sex == "F" | sex == "female", na.rm = TRUE),
-    n_male = sum(sex == "M" | sex == "male", na.rm = TRUE),
     min_age = round(min(age, na.rm = TRUE), -1),
     max_age = round(max(age, na.rm = TRUE), -1),
     median_age = median(age, na.rm = TRUE),
     sd_age = round(median(age, na.rm = TRUE), .1),
-    unique_msoa = dplyr::n_distinct(msoa),
-    sum_has_died = sum(has_died, na.rm = TRUE),
-    sum_care_home_tpp = sum(care_home_tpp == "care_or_nursing_home" | care_home_tpp == "T", na.rm = TRUE),
-    care_home_code = sum(care_home_code, na.rm = TRUE),
-    sum_included = sum(included, na.rm = TRUE)
+    n_female = sum(sex == "F" | sex == "female", na.rm = TRUE),
+    n_male = sum(sex == "M" | sex == "male", na.rm = TRUE),
+    n_registered = sum(registered, na.rm = TRUE),
+    n_msoa = sum(msoa, na.rm = TRUE),
+    n_has_died = sum(has_died, na.rm = TRUE),
+    n_care_home_tpp = sum(care_home_tpp == "care_or_nursing_home" | care_home_tpp == "T", na.rm = TRUE),
+    n_care_home_code = sum(care_home_code, na.rm = TRUE),
+    n_included = sum(included, na.rm = TRUE),
+    n_included_missing = sum(is.na(included))
   )
+
 
 # Create final dataframe for comparison
 df_comparison <- df_summary %>%
   tidyr::pivot_longer(cols = c(
     n,
-    n_female,
-    n_male,
     min_age,
     max_age,
     median_age,
     sd_age,
-    unique_msoa,
-    sum_has_died,
-    sum_care_home_tpp,
-    care_home_code,
-    sum_included
+    n_female,
+    n_male,
+    n_registered,
+    n_msoa,
+    n_has_died,
+    n_care_home_tpp,
+    n_care_home_code,
+    n_included,
+    n_included_missing
   ), names_to = "comparison") %>%
   tidyr::pivot_wider(
     id_cols = c(comparison, index_date),
