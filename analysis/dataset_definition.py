@@ -224,7 +224,7 @@ dataset.any_infection_or_disease_ever = (
 # Define dataset restrictions
 ###############################################################################
 
-set_registered = practice_registrations.exists_for_patient()
+set_registered = practice_reg.exists_for_patient()
 set_msoa_not_null = dataset.msoa.is_not_null()
 set_sex_fm = (dataset.sex == "female") | (dataset.sex == "male")
 set_age_ge2_le120 = (dataset.age >= 2) & (dataset.age <= 120)
