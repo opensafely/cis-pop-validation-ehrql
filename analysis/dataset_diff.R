@@ -39,7 +39,7 @@ df_outputs <- dplyr::mutate(df_outputs,
   index_date = stringr::str_extract(file_name, pattern_date)
 )
 
-# Calculate summary statistics by group
+# Calculate summary statistics by group ----
 df_summary <- df_outputs %>%
   dplyr::select(-file_name) %>%
   dplyr::group_by(opensafely, index_date) %>%
@@ -56,8 +56,7 @@ df_summary <- df_outputs %>%
     n_has_died = sum(has_died, na.rm = TRUE),
     n_care_home_tpp = sum(care_home_tpp == "care_or_nursing_home" | care_home_tpp == "T", na.rm = TRUE),
     n_care_home_code = sum(care_home_code, na.rm = TRUE),
-    n_included = sum(included, na.rm = TRUE),
-    n_included_missing = sum(is.na(included))
+    n_included = sum(included, na.rm = TRUE)
   )
 
 
@@ -76,11 +75,11 @@ df_comparison <- df_summary %>%
     n_has_died,
     n_care_home_tpp,
     n_care_home_code,
-    n_included,
-    n_included_missing
+    n_included
   ), names_to = "comparison") %>%
   dplyr::mutate(
-    value = round(value, -1)) %>%
+    value = round(value, -1)
+  ) %>%
   tidyr::pivot_wider(
     id_cols = c(comparison, index_date),
     names_from = opensafely,
@@ -93,3 +92,18 @@ df_comparison <- df_summary %>%
 # First create new folder results
 fs::dir_create(here::here("output", "diff"))
 readr::write_csv(df_comparison, here::here("output", "diff", "dataset_diff_summary.csv"))
+
+
+# Explore differences in care_home_tpp
+df_comparison_care_home_tpp <- df_outputs %>%
+  dplyr::group_by(
+    opensafely,
+    index_date,
+    care_home_tpp,
+    included,
+    registered
+  ) %>%
+  dplyr::count() %>%
+  dplyr::mutate(n = round(n, -1))
+
+readr::write_csv(df_comparison_care_home_tpp, here::here("output", "diff", "dataset_diff_care_home_tpp.csv"))

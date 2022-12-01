@@ -34,4 +34,5 @@ actions:
       - generate_dataset_ehrql
     outputs:
       moderately_sensitive:
-        cohort: output/diff/dataset_diff_summary.csv
+        summary: output/diff/dataset_diff_summary.csv
+        care_home_tpp: output/diff/dataset_diff_care_home_tpp.csv
