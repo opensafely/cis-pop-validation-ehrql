@@ -224,24 +224,24 @@ dataset.any_infection_or_disease_ever = (
 # Define dataset restrictions
 ###############################################################################
 
-set_registered = practice_reg.exists_for_patient()
-set_msoa_not_null = dataset.msoa.is_not_null()
-set_sex_fm = (dataset.sex == "female") | (dataset.sex == "male")
-set_age_ge2_le120 = (dataset.age >= 2) & (dataset.age <= 120)
-set_has_not_died = ~has_died
-set_not_care_home = ~(care_home_tpp | care_home_code)
+has_practice_reg = practice_reg.exists_for_patient()
+has_msoa_not_null = dataset.msoa.is_not_null()
+has_sex_f_or_m = (dataset.sex == "female") | (dataset.sex == "male")
+has_age_between_2_and_120 = (dataset.age >= 2) & (dataset.age <= 120)
+has_not_died = ~has_died
+has_no_care_home_status = ~(care_home_tpp | care_home_code)
 
 ###############################################################################
 # Apply dataset restrictions and define study population
 ###############################################################################
 
 dataset.set_population(
-    set_registered
-    & set_sex_fm
-    & set_age_ge2_le120
-    & set_has_not_died
-    & set_not_care_home
-    & set_msoa_not_null
+    has_practice_reg
+    & has_sex_f_or_m
+    & has_age_between_2_and_120
+    & has_not_died
+    & has_no_care_home_status
+    & has_msoa_not_null
 )
 
 
@@ -250,7 +250,7 @@ dataset.set_population(
 new_dataset = Dataset()
 new_dataset.set_population(patients.exists_for_patient())
 
-new_dataset.registered = set_registered
+new_dataset.registered = has_practice_reg
 new_dataset.has_died = has_died
 new_dataset.care_home_tpp = care_home_tpp
 new_dataset.care_home_code = care_home_code
