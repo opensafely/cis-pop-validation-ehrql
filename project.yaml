@@ -35,4 +35,5 @@ actions:
     outputs:
       moderately_sensitive:
         summary: output/diff/dataset_diff_summary.csv
-        care_home_tpp: output/diff/dataset_diff_care_home_tpp.csv
+        by_care_home_tpp: output/diff/dataset_diff_care_home_tpp.csv
+        by_sex: output/diff/dataset_diff_sex.csv
