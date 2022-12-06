@@ -225,7 +225,7 @@ dataset.any_infection_or_disease_ever = (
 ###############################################################################
 
 set_registered = practice_reg.exists_for_patient()
-set_msoa_not_null = dataset.msoa.is_not_null()
+set_msoa_not_null = dataset.msoa.is_not_null() & (dataset.msoa != '')
 set_sex_fm = (dataset.sex == "female") | (dataset.sex == "male")
 set_age_ge2_le120 = (dataset.age >= 2) & (dataset.age <= 120)
 set_has_not_died = ~has_died
