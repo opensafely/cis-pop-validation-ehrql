@@ -15,7 +15,7 @@ df_outputs <- purrr::map_dfr(dir_outputs,
     registered = readr::col_logical(),
     sex = readr::col_character(),
     age = readr::col_double(),
-    msoa = readr::col_logical(),
+    msoa = readr::col_character(),
     has_died = readr::col_logical(),
     care_home_tpp = readr::col_character(),
     care_home_code = readr::col_logical(),
@@ -39,6 +39,7 @@ df_outputs <- dplyr::mutate(df_outputs,
   index_date = stringr::str_extract(file_name, pattern_date)
 )
 
+
 # Calculate summary statistics by group ----
 df_summary <- df_outputs %>%
   dplyr::select(-file_name) %>%
@@ -51,6 +52,7 @@ df_summary <- df_outputs %>%
     sd_age = round(median(age, na.rm = TRUE), .1),
     n_female = sum(sex == "F" | sex == "female", na.rm = TRUE),
     n_male = sum(sex == "M" | sex == "male", na.rm = TRUE),
+    n_unique_msoa = dplyr::n_distinct(msoa),
     n_registered = sum(registered, na.rm = TRUE),
     n_has_died = sum(has_died, na.rm = TRUE),
     n_care_home_tpp = sum(care_home_tpp == "care_or_nursing_home" | care_home_tpp == "T", na.rm = TRUE),
@@ -69,6 +71,7 @@ df_comparison <- df_summary %>%
     sd_age,
     n_female,
     n_male,
+    n_unique_msoa,
     n_registered,
     n_has_died,
     n_care_home_tpp,
