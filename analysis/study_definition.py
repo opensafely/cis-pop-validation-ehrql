@@ -217,8 +217,8 @@ study = StudyDefinition(
       NOT has_died
       AND 
       NOT ((care_home_tpp="care_or_nursing_home") OR (care_home_code))
-      AND 
-      msoa
+      AND
+      (msoa AND msoa != 'NPC')
     """,
   ),
     
