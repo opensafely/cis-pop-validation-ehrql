@@ -120,3 +120,16 @@ df_comparison_care_home_tpp <- df_outputs %>%
   dplyr::mutate(n = round(n, -1))
 
 readr::write_csv(df_comparison_care_home_tpp, here::here("output", "diff", "dataset_diff_care_home_tpp.csv"))
+
+
+# Explore differences by sex
+df_comparison_sex <- df_outputs %>%
+  dplyr::group_by(
+    opensafely,
+    index_date,
+    sex
+  ) %>%
+  dplyr::count() %>%
+  dplyr::mutate(n = round(n, -1))
+
+readr::write_csv(df_comparison_sex, here::here("output", "diff", "dataset_diff_sex.csv"))
