@@ -7,10 +7,10 @@ from databuilder.tables.beta import tpp as schema
 from databuilder.codes import Codelist
 
 
-def has_prior_event(prior_events, codelist, where=True):
+def has_matching_event(events, codelist, where=True):
     return (
-        prior_events.take(where)
-        .take(prior_events.snomedct_code.is_in(codelist))
+        events.take(where)
+        .take(events.snomedct_code.is_in(codelist))
         .exists_for_patient()
     )
 

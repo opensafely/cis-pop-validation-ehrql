@@ -13,7 +13,7 @@ from databuilder.tables.beta.tpp import (
 
 import codelists_ehrql
 from variable_lib import (
-    has_prior_event,
+    has_matching_event,
     combine_codelists,
     address_as_of,
     age_as_of,
@@ -73,7 +73,7 @@ care_home_tpp = case(
 )
 
 # Patients in long-stay nursing and residential care
-care_home_code = has_prior_event(prior_events, codelists_ehrql.carehome)
+care_home_code = has_matching_event(prior_events, codelists_ehrql.carehome)
 
 # Middle Super Output Area (MSOA)
 dataset.msoa = address.msoa_code
