@@ -225,7 +225,7 @@ dataset.any_infection_or_disease_ever = (
 
 has_practice_reg = practice_reg.exists_for_patient()
 has_msoa_not_null = dataset.msoa.is_not_null()
-has_sex_f_or_m = (dataset.sex == "female") | (dataset.sex == "male")
+has_sex_f_or_m = dataset.sex.is_in(["female", "male"])
 has_age_between_2_and_120 = (dataset.age >= 2) & (dataset.age <= 120)
 has_not_died = ~has_died
 has_no_care_home_status = ~(care_home_tpp | care_home_code)
