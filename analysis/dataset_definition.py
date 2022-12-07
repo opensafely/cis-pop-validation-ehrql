@@ -28,7 +28,7 @@ hospital_admission_methods = [
     ]
 
 # COMBINE CODELISTS
-# contraining primary care covid events
+# Containing primary care covid events
 primary_care_covid_events = clinical_events.take(
     clinical_events.ctv3_code.is_in(
         combine_codelists(
