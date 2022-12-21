@@ -13,7 +13,7 @@ from databuilder.tables.beta.tpp import (
 
 import codelists_ehrql
 from variable_lib import (
-    has_prior_event,
+    has_matching_event,
     combine_codelists,
     address_as_of,
     age_as_of,
@@ -22,8 +22,22 @@ from variable_lib import (
     practice_registration_as_of,
 )
 
+# Define list of hospital admission methods
+hospital_admission_methods = [
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "2A",
+    "2B",
+    "2C",
+    "2D",
+    "28",
+]
+
 # COMBINE CODELISTS
-# contraining primary care covid events
+# Containing primary care covid events
 primary_care_covid_events = clinical_events.take(
     clinical_events.ctv3_code.is_in(
         combine_codelists(
@@ -48,7 +62,6 @@ dataset = Dataset()
 
 address = address_as_of(index_date)
 prior_events = clinical_events.take(clinical_events.date.is_on_or_before(index_date))
-practice_reg = practice_registration_as_of(index_date)
 prior_tests = sgss_covid_all_tests.take(
     sgss_covid_all_tests.specimen_taken_date.is_on_or_before(index_date)
 )
@@ -63,15 +76,16 @@ dataset.age = age_as_of(index_date)
 has_died = ons_deaths.take(ons_deaths.date <= index_date).exists_for_patient()
 
 # TPP care home flag
-care_home_tpp = case(
-    when(address.care_home_is_potential_match).then(True), default=False
-)
+care_home_tpp = address.care_home_is_potential_match.if_null_then(False)
 
 # Patients in long-stay nursing and residential care
-care_home_code = has_prior_event(prior_events, codelists_ehrql.carehome)
+care_home_code = has_matching_event(prior_events, codelists_ehrql.carehome)
 
 # Middle Super Output Area (MSOA)
 dataset.msoa = address.msoa_code
+
+# Practice registration
+practice_reg = practice_registration_as_of(index_date)
 
 # STP is an NHS administration region based on geography
 dataset.stp = practice_reg.practice_stp
@@ -107,11 +121,7 @@ dataset.covidemergency_01 = (
 dataset.covidadmitted_01 = (
     hospitalisation_diagnosis_matches(hospital_admissions, codelists_ehrql.covid_icd10)
     .take(hospital_admissions.admission_date == index_date)
-    .take(
-        hospital_admissions.admission_method.is_in(
-            ["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"]
-        )
-    )
+    .take(hospital_admissions.admission_method.is_in(hospital_admission_methods))
     .exists_for_patient()
 )
 
@@ -130,14 +140,14 @@ dataset.any_infection_or_disease_01 = (
 
 # Positive COVID test
 dataset.postest_14 = prior_tests.take(
-    (prior_tests.specimen_taken_date >= (index_date - timedelta(days=14)))
+    (prior_tests.specimen_taken_date >= (index_date - timedelta(days=13)))
     & (prior_tests.specimen_taken_date <= index_date)
     & (prior_tests.is_positive)
 ).exists_for_patient()
 
 # Positive case identification
 dataset.primary_care_covid_case_14 = primary_care_covid_events.take(
-    (clinical_events.date >= (index_date - timedelta(days=14)))
+    (clinical_events.date >= (index_date - timedelta(days=13)))
     & (clinical_events.date <= index_date)
 ).exists_for_patient()
 
@@ -147,7 +157,7 @@ dataset.covidemergency_14 = (
         emergency_care_attendances, codelists_ehrql.covid_emergency
     )
     .take(
-        (emergency_care_attendances.arrival_date >= (index_date - timedelta(days=14)))
+        (emergency_care_attendances.arrival_date >= (index_date - timedelta(days=13)))
         & (emergency_care_attendances.arrival_date <= index_date)
     )
     .exists_for_patient()
@@ -157,14 +167,10 @@ dataset.covidemergency_14 = (
 dataset.covidadmitted_14 = (
     hospitalisation_diagnosis_matches(hospital_admissions, codelists_ehrql.covid_icd10)
     .take(
-        (hospital_admissions.admission_date >= (index_date - timedelta(days=14)))
+        (hospital_admissions.admission_date >= (index_date - timedelta(days=13)))
         & (hospital_admissions.admission_date <= index_date)
     )
-    .take(
-        hospital_admissions.admission_method.is_in(
-            ["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"]
-        )
-    )
+    .take(hospital_admissions.admission_method.is_in(hospital_admission_methods))
     .exists_for_patient()
 )
 
@@ -204,11 +210,7 @@ dataset.covidemergency_ever = (
 dataset.covidadmitted_ever = (
     hospitalisation_diagnosis_matches(hospital_admissions, codelists_ehrql.covid_icd10)
     .take((hospital_admissions.admission_date <= index_date))
-    .take(
-        hospital_admissions.admission_method.is_in(
-            ["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"]
-        )
-    )
+    .take(hospital_admissions.admission_method.is_in(hospital_admission_methods))
     .exists_for_patient()
 )
 
@@ -224,24 +226,24 @@ dataset.any_infection_or_disease_ever = (
 # Define dataset restrictions
 ###############################################################################
 
-set_registered = practice_reg.exists_for_patient()
-set_msoa_not_null = dataset.msoa.is_not_null() & (dataset.msoa != '')
-set_sex_fm = (dataset.sex == "female") | (dataset.sex == "male")
-set_age_ge2_le120 = (dataset.age >= 2) & (dataset.age <= 120)
-set_has_not_died = ~has_died
-set_not_care_home = ~(care_home_tpp | care_home_code)
+has_practice_reg = practice_reg.exists_for_patient()
+has_msoa_not_null = dataset.msoa.is_not_null()
+has_sex_f_or_m = dataset.sex.is_in(["female", "male"])
+has_age_between_2_and_120 = (dataset.age >= 2) & (dataset.age <= 120)
+has_not_died = ~has_died
+has_no_care_home_status = ~(care_home_tpp | care_home_code)
 
 ###############################################################################
 # Apply dataset restrictions and define study population
 ###############################################################################
 
 dataset.set_population(
-    set_registered
-    & set_sex_fm
-    & set_age_ge2_le120
-    & set_has_not_died
-    & set_not_care_home
-    & set_msoa_not_null
+    has_practice_reg
+    & has_sex_f_or_m
+    & has_age_between_2_and_120
+    & has_not_died
+    & has_no_care_home_status
+    & has_msoa_not_null
 )
 
 
@@ -250,7 +252,7 @@ dataset.set_population(
 new_dataset = Dataset()
 new_dataset.set_population(patients.exists_for_patient())
 
-new_dataset.registered = set_registered
+new_dataset.registered = has_practice_reg
 new_dataset.has_died = has_died
 new_dataset.care_home_tpp = care_home_tpp
 new_dataset.care_home_code = care_home_code

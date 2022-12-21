@@ -1,8 +1,12 @@
+from pathlib import Path
+
 from cohortextractor import (codelist, codelist_from_csv, combine_codelists)
+
+CODELIST_DIR = Path("codelists")
 
 
 covid_icd10 = codelist_from_csv(
-    "codelists/opensafely-covid-identification.csv",
+    CODELIST_DIR / "opensafely-covid-identification.csv",
     system="icd10",
     column="icd10_code",
 )
@@ -14,19 +18,19 @@ covid_emergency = codelist(
 
 
 covid_primary_care_positive_test = codelist_from_csv(
-    "codelists/opensafely-covid-identification-in-primary-care-probable-covid-positive-test.csv",
+    CODELIST_DIR / "opensafely-covid-identification-in-primary-care-probable-covid-positive-test.csv",
     system="ctv3",
     column="CTV3ID",
 )
 
 covid_primary_care_code = codelist_from_csv(
-    "codelists/opensafely-covid-identification-in-primary-care-probable-covid-clinical-code.csv",
+    CODELIST_DIR / "opensafely-covid-identification-in-primary-care-probable-covid-clinical-code.csv",
     system="ctv3",
     column="CTV3ID",
 )
 
 covid_primary_care_sequelae = codelist_from_csv(
-    "codelists/opensafely-covid-identification-in-primary-care-probable-covid-sequelae.csv",
+    CODELIST_DIR / "opensafely-covid-identification-in-primary-care-probable-covid-sequelae.csv",
     system="ctv3",
     column="CTV3ID",
 )
@@ -71,13 +75,13 @@ covid_primary_care_probable_combined = combine_codelists(
 
 
 ethnicity = codelist_from_csv(
-    "codelists/opensafely-ethnicity.csv",
+    CODELIST_DIR / "opensafely-ethnicity.csv",
     system="ctv3",
     column="Code",
     category_column="Grouping_6",
 )
 ethnicity_16 = codelist_from_csv(
-    "codelists/opensafely-ethnicity.csv",
+    CODELIST_DIR / "opensafely-ethnicity.csv",
     system="ctv3",
     column="Code",
     category_column="Grouping_16",
@@ -90,7 +94,7 @@ ethnicity_16 = codelist_from_csv(
 
 # Patients in long-stay nursing and residential care
 carehome = codelist_from_csv(
-    "codelists/primis-covid19-vacc-uptake-longres.csv", 
+    CODELIST_DIR / "primis-covid19-vacc-uptake-longres.csv", 
     system="snomed", 
     column="code",
 )
