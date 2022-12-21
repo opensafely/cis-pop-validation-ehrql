@@ -53,7 +53,6 @@ dataset = Dataset()
 
 address = address_as_of(index_date)
 prior_events = clinical_events.take(clinical_events.date.is_on_or_before(index_date))
-practice_reg = practice_registration_as_of(index_date)
 prior_tests = sgss_covid_all_tests.take(
     sgss_covid_all_tests.specimen_taken_date.is_on_or_before(index_date)
 )
@@ -75,6 +74,9 @@ care_home_code = has_matching_event(prior_events, codelists_ehrql.carehome)
 
 # Middle Super Output Area (MSOA)
 dataset.msoa = address.msoa_code
+
+# Practice registration
+practice_reg = practice_registration_as_of(index_date)
 
 # STP is an NHS administration region based on geography
 dataset.stp = practice_reg.practice_stp
