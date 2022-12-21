@@ -68,9 +68,7 @@ dataset.age = age_as_of(index_date)
 has_died = ons_deaths.take(ons_deaths.date <= index_date).exists_for_patient()
 
 # TPP care home flag
-care_home_tpp = case(
-    when(address.care_home_is_potential_match).then(True), default=False
-)
+care_home_tpp = address.care_home_is_potential_match.if_null_then(False)
 
 # Patients in long-stay nursing and residential care
 care_home_code = has_matching_event(prior_events, codelists_ehrql.carehome)
