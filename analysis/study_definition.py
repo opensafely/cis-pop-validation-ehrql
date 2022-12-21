@@ -206,22 +206,22 @@ study = StudyDefinition(
     },
   ),    
   
-  # included=patients.satisfying(
-  #   """
-  #     has_practice_reg
-  #     AND
-  #     (age >= 2 AND age <=120)
-  #     AND
-  #     (sex = "M" OR sex = "F")
-  #     AND
-  #     NOT has_died
-  #     AND 
-  #     NOT ((care_home_tpp="care_or_nursing_home") OR (care_home_code))
-  #     AND
-  #     (msoa AND msoa != 'NPC')
-  #   """,
-  # ),
-    
+  included=patients.satisfying(
+    """
+      registered
+      AND
+      (age >= 2 AND age <=120)
+      AND
+      (sex = "M" OR sex = "F")
+      AND
+      NOT has_died
+      AND
+      NOT ((care_home_tpp="care_or_nursing_home") OR (care_home_code))
+      AND
+      (msoa AND msoa != 'NPC')
+    """,
+  ),
+
    # stp is an NHS administration region based on geography
    stp=patients.registered_practice_as_of(
      "index_date",

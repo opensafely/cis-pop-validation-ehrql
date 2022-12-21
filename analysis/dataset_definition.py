@@ -234,11 +234,9 @@ has_age_between_2_and_120 = (dataset.age >= 2) & (dataset.age <= 120)
 has_not_died = ~dataset.has_died
 has_no_care_home_status = ~(dataset.care_home_tpp | dataset.care_home_code)
 
-###############################################################################
-# Apply dataset restrictions and define study population
-###############################################################################
-
-dataset.set_population(
+# NOTE: this probably isn't a convention we want to encourage but this variable
+# is currently needed to compare the population. We should find a better solution.
+dataset.included = (
     has_practice_reg
     & has_sex_f_or_m
     & has_age_between_2_and_120
@@ -246,3 +244,9 @@ dataset.set_population(
     & has_no_care_home_status
     & has_msoa_not_null
 )
+
+###############################################################################
+# Apply dataset restrictions and define study population
+###############################################################################
+
+dataset.set_population(dataset.included)

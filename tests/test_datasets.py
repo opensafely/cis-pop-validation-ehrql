@@ -44,6 +44,7 @@ def test_dataset_definition():
         "any_infection_or_disease_01": "F",
         "any_infection_or_disease_14": "F",
         "any_infection_or_disease_ever": "T",
+        "included": "T",
     }
 
 
