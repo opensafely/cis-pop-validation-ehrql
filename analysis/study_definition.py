@@ -37,7 +37,21 @@ study = StudyDefinition(
   index_date = "2022-09-25",
   
   # This line defines the study population
-  population=patients.all(),
+  population=patients.satisfying(
+    """
+      registered
+      AND
+      (age >= 2 AND age <=120)
+      AND
+      (sex = "M" OR sex = "F")
+      AND
+      NOT has_died
+      AND
+      NOT ((care_home_tpp="care_or_nursing_home") OR (care_home_code))
+      AND
+      (msoa AND msoa != 'NPC')
+    """,
+  ),
 
   # we define baseline variables on the day _before_ the study date
   registered=patients.registered_as_of(
@@ -206,22 +220,6 @@ study = StudyDefinition(
     },
   ),    
   
-  included=patients.satisfying(
-    """
-      registered
-      AND
-      (age >= 2 AND age <=120)
-      AND
-      (sex = "M" OR sex = "F")
-      AND
-      NOT has_died
-      AND
-      NOT ((care_home_tpp="care_or_nursing_home") OR (care_home_code))
-      AND
-      (msoa AND msoa != 'NPC')
-    """,
-  ),
-
    # stp is an NHS administration region based on geography
    stp=patients.registered_practice_as_of(
      "index_date",
