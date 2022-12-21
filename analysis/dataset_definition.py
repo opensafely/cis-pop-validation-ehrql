@@ -24,8 +24,17 @@ from variable_lib import (
 
 # Define list of hospital admission methods
 hospital_admission_methods = [
-    "21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"
-    ]
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "2A",
+    "2B",
+    "2C",
+    "2D",
+    "28",
+]
 
 # COMBINE CODELISTS
 # Containing primary care covid events
@@ -112,9 +121,7 @@ dataset.covidemergency_01 = (
 dataset.covidadmitted_01 = (
     hospitalisation_diagnosis_matches(hospital_admissions, codelists_ehrql.covid_icd10)
     .take(hospital_admissions.admission_date == index_date)
-    .take(
-        hospital_admissions.admission_method.is_in(hospital_admission_methods)
-    )
+    .take(hospital_admissions.admission_method.is_in(hospital_admission_methods))
     .exists_for_patient()
 )
 
@@ -163,9 +170,7 @@ dataset.covidadmitted_14 = (
         (hospital_admissions.admission_date >= (index_date - timedelta(days=13)))
         & (hospital_admissions.admission_date <= index_date)
     )
-    .take(
-        hospital_admissions.admission_method.is_in(hospital_admission_methods)
-    )
+    .take(hospital_admissions.admission_method.is_in(hospital_admission_methods))
     .exists_for_patient()
 )
 
@@ -205,9 +210,7 @@ dataset.covidemergency_ever = (
 dataset.covidadmitted_ever = (
     hospitalisation_diagnosis_matches(hospital_admissions, codelists_ehrql.covid_icd10)
     .take((hospital_admissions.admission_date <= index_date))
-    .take(
-        hospital_admissions.admission_method.is_in(hospital_admission_methods)
-    )
+    .take(hospital_admissions.admission_method.is_in(hospital_admission_methods))
     .exists_for_patient()
 )
 

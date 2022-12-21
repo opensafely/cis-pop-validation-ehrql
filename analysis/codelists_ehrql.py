@@ -25,19 +25,22 @@ covid_emergency = codelist(
 )
 
 covid_primary_care_positive_test = codelist_from_csv(
-    CODELIST_DIR / "opensafely-covid-identification-in-primary-care-probable-covid-positive-test.csv",
+    CODELIST_DIR
+    / "opensafely-covid-identification-in-primary-care-probable-covid-positive-test.csv",
     system="ctv3",
     column="CTV3ID",
 )
 
 covid_primary_care_code = codelist_from_csv(
-    CODELIST_DIR / "opensafely-covid-identification-in-primary-care-probable-covid-clinical-code.csv",
+    CODELIST_DIR
+    / "opensafely-covid-identification-in-primary-care-probable-covid-clinical-code.csv",
     system="ctv3",
     column="CTV3ID",
 )
 
 covid_primary_care_sequelae = codelist_from_csv(
-    CODELIST_DIR / "opensafely-covid-identification-in-primary-care-probable-covid-sequelae.csv",
+    CODELIST_DIR
+    / "opensafely-covid-identification-in-primary-care-probable-covid-sequelae.csv",
     system="ctv3",
     column="CTV3ID",
 )
