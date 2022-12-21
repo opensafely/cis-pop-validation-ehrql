@@ -22,12 +22,13 @@ def test_dataset_definition():
         "patient_id": 7,
         "sex": "male",
         "age": 22,
-        # "has_died": "F",
-        # "care_home_tpp": "F",
-        # "care_home_code": "F",
+        "has_died": "F",
+        "care_home_tpp": "F",
+        "care_home_code": "F",
         "msoa": "E02000010",
-        "stp": 3,
+        "stp": "STP3",
         "region": "region_practice3",
+        "registered": "T",
         "postest_01": "F",
         "postest_14": "F",
         "postest_ever": "T",
@@ -54,4 +55,4 @@ def test_dataset_columns():
     cols_ehrql = df_ehrql.columns
 
     # assert
-    sorted(cols_cohortextractor) == sorted(cols_ehrql)
+    assert sorted(cols_cohortextractor) == sorted(cols_ehrql)

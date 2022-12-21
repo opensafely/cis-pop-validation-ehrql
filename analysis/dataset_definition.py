@@ -73,19 +73,20 @@ prior_tests = sgss_covid_all_tests.take(
 # Demographic variables
 dataset.sex = patients.sex
 dataset.age = age_as_of(index_date)
-has_died = ons_deaths.take(ons_deaths.date <= index_date).exists_for_patient()
+dataset.has_died = ons_deaths.take(ons_deaths.date <= index_date).exists_for_patient()
 
 # TPP care home flag
-care_home_tpp = address.care_home_is_potential_match.if_null_then(False)
+dataset.care_home_tpp = address.care_home_is_potential_match.if_null_then(False)
 
 # Patients in long-stay nursing and residential care
-care_home_code = has_matching_event(prior_events, codelists_ehrql.carehome)
+dataset.care_home_code = has_matching_event(prior_events, codelists_ehrql.carehome)
 
 # Middle Super Output Area (MSOA)
 dataset.msoa = address.msoa_code
 
 # Practice registration
 practice_reg = practice_registration_as_of(index_date)
+dataset.registered = practice_reg.exists_for_patient()
 
 # STP is an NHS administration region based on geography
 dataset.stp = practice_reg.practice_stp
@@ -230,8 +231,8 @@ has_practice_reg = practice_reg.exists_for_patient()
 has_msoa_not_null = dataset.msoa.is_not_null()
 has_sex_f_or_m = dataset.sex.is_in(["female", "male"])
 has_age_between_2_and_120 = (dataset.age >= 2) & (dataset.age <= 120)
-has_not_died = ~has_died
-has_no_care_home_status = ~(care_home_tpp | care_home_code)
+has_not_died = ~dataset.has_died
+has_no_care_home_status = ~(dataset.care_home_tpp | dataset.care_home_code)
 
 ###############################################################################
 # Apply dataset restrictions and define study population
@@ -245,21 +246,3 @@ dataset.set_population(
     & has_no_care_home_status
     & has_msoa_not_null
 )
-
-
-# New temporary dataset to capture the individual components of the population
-# definition for comparison with cohortextractor
-new_dataset = Dataset()
-new_dataset.set_population(patients.exists_for_patient())
-
-new_dataset.registered = has_practice_reg
-new_dataset.has_died = has_died
-new_dataset.care_home_tpp = care_home_tpp
-new_dataset.care_home_code = care_home_code
-new_dataset.age = dataset.age
-new_dataset.sex = dataset.sex
-new_dataset.msoa = dataset.msoa
-new_dataset.included = dataset.population
-
-# Overwrite the origianl dataset with our temporary one
-dataset = new_dataset

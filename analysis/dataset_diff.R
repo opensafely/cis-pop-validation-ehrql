@@ -4,7 +4,6 @@ library(magrittr)
 # Get output files
 dir_outputs <- fs::dir_ls(path = "output", glob = "*.csv$")
 
-
 # Read outputfiles into one dataframe
 # Convert all variables to appropriate type
 df_outputs <- purrr::map_dfr(dir_outputs,
@@ -19,12 +18,28 @@ df_outputs <- purrr::map_dfr(dir_outputs,
     has_died = readr::col_logical(),
     care_home_tpp = readr::col_character(),
     care_home_code = readr::col_logical(),
-    included = readr::col_logical()
+    stp = readr::col_character(),
+    region = readr::col_character(),
+    postest_01 = readr::col_logical(),
+    primary_care_covid_case_01 = readr::col_logical(),
+    covidemergency_01 = readr::col_logical(),
+    covidadmitted_01 = readr::col_logical(),
+    any_infection_or_disease_01 = readr::col_logical(),
+    postest_14 = readr::col_logical(),
+    primary_care_covid_case_14 = readr::col_logical(),
+    covidemergency_14 = readr::col_logical(),
+    covidadmitted_14 = readr::col_logical(),
+    any_infection_or_disease_14 = readr::col_logical(),
+    postest_ever = readr::col_logical(),
+    primary_care_covid_case_ever = readr::col_logical(),
+    covidemergency_ever = readr::col_logical(),
+    covidadmitted_ever = readr::col_logical(),
+    any_infection_or_disease_ever = readr::col_logical()
   )
 ) %>%
-  dplyr::relocate(
+  dplyr::select(
     patient_id, registered, sex, age, msoa, has_died,
-    care_home_tpp, care_home_code, included
+    care_home_tpp, care_home_code, file_name
   ) %>%
   dplyr::arrange(patient_id)
 
@@ -62,8 +77,7 @@ df_summary <- df_outputs %>%
     n_care_home_tpp = sum(care_home_tpp == "care_or_nursing_home" | care_home_tpp == "T", na.rm = TRUE),
     n_care_home_tpp_missing = sum(is.na(care_home_tpp) | is.na(care_home_tpp)),
     n_care_home_code = sum(care_home_code, na.rm = TRUE),
-    n_care_home_code_missing = sum(is.na(care_home_code)),
-    n_included = sum(included, na.rm = TRUE)
+    n_care_home_code_missing = sum(is.na(care_home_code))
   )
 
 
@@ -87,8 +101,7 @@ df_comparison <- df_summary %>%
     n_care_home_tpp,
     n_care_home_tpp_missing,
     n_care_home_code,
-    n_care_home_code_missing,
-    n_included
+    n_care_home_code_missing
   ), names_to = "comparison") %>%
   dplyr::mutate(
     value = round(value, -1)
@@ -113,7 +126,6 @@ df_comparison_care_home_tpp <- df_outputs %>%
     opensafely,
     index_date,
     care_home_tpp,
-    included,
     registered
   ) %>%
   dplyr::count() %>%

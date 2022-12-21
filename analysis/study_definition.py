@@ -206,68 +206,68 @@ study = StudyDefinition(
     },
   ),    
   
-  included=patients.satisfying(
-    """
-      registered
-      AND
-      (age >= 2 AND age <=120)
-      AND
-      (sex = "M" OR sex = "F")
-      AND
-      NOT has_died
-      AND 
-      NOT ((care_home_tpp="care_or_nursing_home") OR (care_home_code))
-      AND
-      (msoa AND msoa != 'NPC')
-    """,
-  ),
+  # included=patients.satisfying(
+  #   """
+  #     has_practice_reg
+  #     AND
+  #     (age >= 2 AND age <=120)
+  #     AND
+  #     (sex = "M" OR sex = "F")
+  #     AND
+  #     NOT has_died
+  #     AND 
+  #     NOT ((care_home_tpp="care_or_nursing_home") OR (care_home_code))
+  #     AND
+  #     (msoa AND msoa != 'NPC')
+  #   """,
+  # ),
     
-  #  # stp is an NHS administration region based on geography
-  #  stp=patients.registered_practice_as_of(
-  #    "index_date",
-  #    returning="stp_code",
-  #    return_expectations={
-  #      "rate": "universal",
-  #      "category": {
-  #        "ratios": {
-  #          "STP1": 0.1,
-  #          "STP2": 0.1,
-  #          "STP3": 0.1,
-  #          "STP4": 0.1,
-  #          "STP5": 0.1,
-  #          "STP6": 0.1,
-  #          "STP7": 0.1,
-  #          "STP8": 0.1,
-  #          "STP9": 0.1,
-  #          "STP10": 0.1,
-  #        }
-  #      },
-  #    },
-  #  ),
-  #  
-  #  # NHS administrative region
-  #  # FIXME can we get an equivalent using patient postcode not GP address?
-  #  region=patients.registered_practice_as_of(
-  #    "index_date",
-  #    returning="nuts1_region_name",
-  #    return_expectations={
-  #      "rate": "universal",
-  #      "category": {
-  #        "ratios": {
-  #          "North East": 0.1,
-  #          "North West": 0.1,
-  #          "Yorkshire and The Humber": 0.2,
-  #          "East Midlands": 0.1,
-  #          "West Midlands": 0.1,
-  #          "East": 0.1,
-  #          "London": 0.1,
-  #          "South East": 0.1,
-  #          "South West": 0.1
-  #          #"" : 0.01
-  #        },
-  #      },
-  #    },
-  #  ),
+   # stp is an NHS administration region based on geography
+   stp=patients.registered_practice_as_of(
+     "index_date",
+     returning="stp_code",
+     return_expectations={
+       "rate": "universal",
+       "category": {
+         "ratios": {
+           "STP1": 0.1,
+           "STP2": 0.1,
+           "STP3": 0.1,
+           "STP4": 0.1,
+           "STP5": 0.1,
+           "STP6": 0.1,
+           "STP7": 0.1,
+           "STP8": 0.1,
+           "STP9": 0.1,
+           "STP10": 0.1,
+         }
+       },
+     },
+   ),
+   
+   # NHS administrative region
+   # FIXME can we get an equivalent using patient postcode not GP address?
+   region=patients.registered_practice_as_of(
+     "index_date",
+     returning="nuts1_region_name",
+     return_expectations={
+       "rate": "universal",
+       "category": {
+         "ratios": {
+           "North East": 0.1,
+           "North West": 0.1,
+           "Yorkshire and The Humber": 0.2,
+           "East Midlands": 0.1,
+           "West Midlands": 0.1,
+           "East": 0.1,
+           "London": 0.1,
+           "South East": 0.1,
+           "South West": 0.1
+           #"" : 0.01
+         },
+       },
+     },
+   ),
   #  
   #  ## IMD - quintile
   #  # imd=patients.address_as_of(
@@ -297,222 +297,222 @@ study = StudyDefinition(
   #  # ),
   #  # 
 
-  #  ############################################################
-  #  ## single-day events
-  #  ## "Did any event occur on this day?"
-  #  ############################################################
+   ############################################################
+   ## single-day events
+   ## "Did any event occur on this day?"
+   ############################################################
 
-  #  # positive covid test
-  #  postest_01=patients.with_test_result_in_sgss(
-  #      pathogen="SARS-CoV-2",
-  #      test_result="positive",
-  #      returning="binary_flag",
-  #      between=["index_date", "index_date"],
-  #      find_first_match_in_period=True,
-  #      restrict_to_earliest_specimen_date=False,
-  #  ),
-  #  
-  #  # positive sympomatic covid test
-  #  # postest_symptomatic_01=patients.satisfying(
-  #  #   """
-  #  #   postest_01 AND symptom_01="Y"
-  #  #   """,
-  #  # 
-  #  #   symptom_01 = patients.with_test_result_in_sgss(
-  #  #     pathogen="SARS-CoV-2",
-  #  #     test_result="positive",
-  #  #     returning="symptomatic",
-  #  #     between=["index_date", "index_date"],
-  #  #     find_first_match_in_period=True,
-  #  #     restrict_to_earliest_specimen_date=False,
-  #  #   ),
-  #  # ),
-  #  
-  #  # positive case identification
-  #  primary_care_covid_case_01=patients.with_these_clinical_events(
-  #    combine_codelists( # FIXME - ask Colm about new codelists
-  #      codelists_cohortextractor.covid_primary_care_code,
-  #      codelists_cohortextractor.covid_primary_care_positive_test,
-  #      codelists_cohortextractor.covid_primary_care_sequelae,
-  #    ),
-  #    returning="binary_flag",
-  #    date_format="YYYY-MM-DD",
-  #    between=["index_date", "index_date"],
-  #    find_first_match_in_period=True,
-  #  ),
-  #  
-  #  # emergency attendance for covid
-  #  covidemergency_01=patients.attended_emergency_care(
-  #    returning="binary_flag",
-  #    date_format="YYYY-MM-DD",
-  #    between=["index_date", "index_date"],
-  #    with_these_diagnoses = codelists_cohortextractor.covid_emergency,
-  #    find_first_match_in_period=True,
-  #  ),
-  #  
-  #  # covid admission
-  #  covidadmitted_01=patients.admitted_to_hospital(
-  #    returning="binary_flag",
-  #    with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"],
-  #    with_these_diagnoses=codelists_cohortextractor.covid_icd10,
-  #    between=["index_date", "index_date"],
-  #    find_first_match_in_period=True,
-  #  ),
-  #  
-  #  any_infection_or_disease_01=patients.satisfying(
-  #    """
-  #    postest_01
-  #    OR primary_care_covid_case_01
-  #    OR covidemergency_01
-  #    OR covidadmitted_01
-  #    """
-  #  ),
-  #  
-  #  
-  #  ############################################################
-  #  ## 14-day events
-  #  ## "Did any event occur within the last 14 days?"
-  #  ############################################################
+   # positive covid test
+   postest_01=patients.with_test_result_in_sgss(
+       pathogen="SARS-CoV-2",
+       test_result="positive",
+       returning="binary_flag",
+       between=["index_date", "index_date"],
+       find_first_match_in_period=True,
+       restrict_to_earliest_specimen_date=False,
+   ),
+   
+   # positive sympomatic covid test
+   # postest_symptomatic_01=patients.satisfying(
+   #   """
+   #   postest_01 AND symptom_01="Y"
+   #   """,
+   # 
+   #   symptom_01 = patients.with_test_result_in_sgss(
+   #     pathogen="SARS-CoV-2",
+   #     test_result="positive",
+   #     returning="symptomatic",
+   #     between=["index_date", "index_date"],
+   #     find_first_match_in_period=True,
+   #     restrict_to_earliest_specimen_date=False,
+   #   ),
+   # ),
+   
+   # positive case identification
+   primary_care_covid_case_01=patients.with_these_clinical_events(
+     combine_codelists( # FIXME - ask Colm about new codelists
+       codelists_cohortextractor.covid_primary_care_code,
+       codelists_cohortextractor.covid_primary_care_positive_test,
+       codelists_cohortextractor.covid_primary_care_sequelae,
+     ),
+     returning="binary_flag",
+     date_format="YYYY-MM-DD",
+     between=["index_date", "index_date"],
+     find_first_match_in_period=True,
+   ),
+   
+   # emergency attendance for covid
+   covidemergency_01=patients.attended_emergency_care(
+     returning="binary_flag",
+     date_format="YYYY-MM-DD",
+     between=["index_date", "index_date"],
+     with_these_diagnoses = codelists_cohortextractor.covid_emergency,
+     find_first_match_in_period=True,
+   ),
+   
+   # covid admission
+   covidadmitted_01=patients.admitted_to_hospital(
+     returning="binary_flag",
+     with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"],
+     with_these_diagnoses=codelists_cohortextractor.covid_icd10,
+     between=["index_date", "index_date"],
+     find_first_match_in_period=True,
+   ),
+   
+   any_infection_or_disease_01=patients.satisfying(
+     """
+     postest_01
+     OR primary_care_covid_case_01
+     OR covidemergency_01
+     OR covidadmitted_01
+     """
+   ),
+   
+   
+   ############################################################
+   ## 14-day events
+   ## "Did any event occur within the last 14 days?"
+   ############################################################
 
-  #  # positive covid test
-  #  postest_14=patients.with_test_result_in_sgss(
-  #      pathogen="SARS-CoV-2",
-  #      test_result="positive",
-  #      returning="binary_flag",
-  #      between=["index_date - 13 days", "index_date"],
-  #      find_first_match_in_period=True,
-  #      restrict_to_earliest_specimen_date=False,
-  #  ),
-  #  
-  #  # positive sympomatic covid test
-  #  # FIXME: note this will not pick up a symptomatic test that occurred before a subsequent non-symptomatic test within the same period
-  #  # because we can only "return" symptomatic status, not filter on it
-  #  # postest_symptomatic_14=patients.satisfying(
-  #  #   """
-  #  #   postest_14 AND symptom_14="Y"
-  #  #   """,
-  #  # 
-  #  #   symptom_14 = patients.with_test_result_in_sgss(
-  #  #     pathogen="SARS-CoV-2",
-  #  #     test_result="positive",
-  #  #     returning="symptomatic",
-  #  #     between=["index_date - 13 days", "index_date"],
-  #  #     find_first_match_in_period=True,
-  #  #     restrict_to_earliest_specimen_date=False,
-  #  #   ),
-  #  # ),
-  #  
-  #  # Positive case identification
-  #  primary_care_covid_case_14=patients.with_these_clinical_events(
-  #    combine_codelists( # FIXME - ask Colm about new codelists
-  #      codelists_cohortextractor.covid_primary_care_code,
-  #      codelists_cohortextractor.covid_primary_care_positive_test,
-  #      codelists_cohortextractor.covid_primary_care_sequelae,
-  #    ),
-  #    returning="binary_flag",
-  #    date_format="YYYY-MM-DD",
-  #    between=["index_date - 13 days", "index_date"],
-  #    find_first_match_in_period=True,
-  #  ),
-  #  
-  #  # emergency attendance for covid
-  #  covidemergency_14=patients.attended_emergency_care(
-  #    returning="binary_flag",
-  #    date_format="YYYY-MM-DD",
-  #    between=["index_date - 13 days", "index_date"],
-  #    with_these_diagnoses = codelists_cohortextractor.covid_emergency,
-  #    find_first_match_in_period=True,
-  #  ),
+   # positive covid test
+   postest_14=patients.with_test_result_in_sgss(
+       pathogen="SARS-CoV-2",
+       test_result="positive",
+       returning="binary_flag",
+       between=["index_date - 13 days", "index_date"],
+       find_first_match_in_period=True,
+       restrict_to_earliest_specimen_date=False,
+   ),
+   
+   # positive sympomatic covid test
+   # FIXME: note this will not pick up a symptomatic test that occurred before a subsequent non-symptomatic test within the same period
+   # because we can only "return" symptomatic status, not filter on it
+   # postest_symptomatic_14=patients.satisfying(
+   #   """
+   #   postest_14 AND symptom_14="Y"
+   #   """,
+   # 
+   #   symptom_14 = patients.with_test_result_in_sgss(
+   #     pathogen="SARS-CoV-2",
+   #     test_result="positive",
+   #     returning="symptomatic",
+   #     between=["index_date - 13 days", "index_date"],
+   #     find_first_match_in_period=True,
+   #     restrict_to_earliest_specimen_date=False,
+   #   ),
+   # ),
+   
+   # Positive case identification
+   primary_care_covid_case_14=patients.with_these_clinical_events(
+     combine_codelists( # FIXME - ask Colm about new codelists
+       codelists_cohortextractor.covid_primary_care_code,
+       codelists_cohortextractor.covid_primary_care_positive_test,
+       codelists_cohortextractor.covid_primary_care_sequelae,
+     ),
+     returning="binary_flag",
+     date_format="YYYY-MM-DD",
+     between=["index_date - 13 days", "index_date"],
+     find_first_match_in_period=True,
+   ),
+   
+   # emergency attendance for covid
+   covidemergency_14=patients.attended_emergency_care(
+     returning="binary_flag",
+     date_format="YYYY-MM-DD",
+     between=["index_date - 13 days", "index_date"],
+     with_these_diagnoses = codelists_cohortextractor.covid_emergency,
+     find_first_match_in_period=True,
+   ),
 
-  #  # covid admission
-  #  covidadmitted_14=patients.admitted_to_hospital(
-  #    returning="binary_flag",
-  #    with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"],
-  #    with_these_diagnoses=codelists_cohortextractor.covid_icd10,
-  #    between=["index_date - 13 days", "index_date"],
-  #    find_first_match_in_period=True,
-  #  ),
-  #  
-  #  any_infection_or_disease_14=patients.satisfying(
-  #    """
-  #    postest_14
-  #    OR primary_care_covid_case_14
-  #    OR covidemergency_14
-  #    OR covidadmitted_14
-  #    """
-  #  ),
+   # covid admission
+   covidadmitted_14=patients.admitted_to_hospital(
+     returning="binary_flag",
+     with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"],
+     with_these_diagnoses=codelists_cohortextractor.covid_icd10,
+     between=["index_date - 13 days", "index_date"],
+     find_first_match_in_period=True,
+   ),
+   
+   any_infection_or_disease_14=patients.satisfying(
+     """
+     postest_14
+     OR primary_care_covid_case_14
+     OR covidemergency_14
+     OR covidadmitted_14
+     """
+   ),
 
-  #  ############################################################
-  #  ## ever-day events
-  #  ## "Did any event occur any time up to and including this day?"
-  #  ############################################################
+   ############################################################
+   ## ever-day events
+   ## "Did any event occur any time up to and including this day?"
+   ############################################################
 
-  #  # positive covid test
-  #  postest_ever=patients.with_test_result_in_sgss(
-  #      pathogen="SARS-CoV-2",
-  #      test_result="positive",
-  #      returning="binary_flag",
-  #      on_or_before="index_date",
-  #      find_first_match_in_period=True,
-  #      restrict_to_earliest_specimen_date=False,
-  #  ),
-  #  
-  #  # positive symptomatic covid test
-  #  # FIXME: note this will not pick up a symptomatic test that occurred before a subsequent non-symptomatic test within the same period
-  #  # because we can only "return" symptomatic status, not filter on it
-  #  # postest_symptomatic_ever=patients.satisfying(
-  #  #   """
-  #  #   postest_ever AND symptom_ever="Y"
-  #  #   """,
-  #  #   symptom_ever = patients.with_test_result_in_sgss(
-  #  #     pathogen="SARS-CoV-2",
-  #  #     test_result="positive",
-  #  #     returning="symptomatic",
-  #  #     on_or_before="index_date",
-  #  #     find_first_match_in_period=True,
-  #  #     restrict_to_earliest_specimen_date=False,
-  #  #   ),
-  #  # ),
-  #  # 
-  #  
-  #  # positive case identification
-  #  primary_care_covid_case_ever=patients.with_these_clinical_events(
-  #    combine_codelists( # FIXME - ask Colm about new codelists
-  #      codelists_cohortextractor.covid_primary_care_code,
-  #      codelists_cohortextractor.covid_primary_care_positive_test,
-  #      codelists_cohortextractor.covid_primary_care_sequelae,
-  #    ),
-  #    returning="binary_flag",
-  #    on_or_before="index_date",
-  #    find_first_match_in_period=True,
-  #  ),
-  #  
-  #  # emergency attendance for covid
-  #  covidemergency_ever=patients.attended_emergency_care(
-  #    returning="binary_flag",
-  #    on_or_before="index_date",
-  #    with_these_diagnoses = codelists_cohortextractor.covid_emergency,
-  #    find_first_match_in_period=True,
-  #  ),
-  #  
-  #  # covid admission
-  #  covidadmitted_ever=patients.admitted_to_hospital(
-  #    returning="binary_flag",
-  #    with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"],
-  #    with_these_diagnoses=codelists_cohortextractor.covid_icd10,
-  #    on_or_before="index_date",
-  #    find_first_match_in_period=True,
-  #  ),
-  #  
-  #  # 
-  #  any_infection_or_disease_ever=patients.satisfying(
-  #    """
-  #    postest_ever
-  #    OR primary_care_covid_case_ever
-  #    OR covidemergency_ever
-  #    OR covidadmitted_ever
-  #    """
-  #  )
+   # positive covid test
+   postest_ever=patients.with_test_result_in_sgss(
+       pathogen="SARS-CoV-2",
+       test_result="positive",
+       returning="binary_flag",
+       on_or_before="index_date",
+       find_first_match_in_period=True,
+       restrict_to_earliest_specimen_date=False,
+   ),
+   
+   # positive symptomatic covid test
+   # FIXME: note this will not pick up a symptomatic test that occurred before a subsequent non-symptomatic test within the same period
+   # because we can only "return" symptomatic status, not filter on it
+   # postest_symptomatic_ever=patients.satisfying(
+   #   """
+   #   postest_ever AND symptom_ever="Y"
+   #   """,
+   #   symptom_ever = patients.with_test_result_in_sgss(
+   #     pathogen="SARS-CoV-2",
+   #     test_result="positive",
+   #     returning="symptomatic",
+   #     on_or_before="index_date",
+   #     find_first_match_in_period=True,
+   #     restrict_to_earliest_specimen_date=False,
+   #   ),
+   # ),
+   # 
+   
+   # positive case identification
+   primary_care_covid_case_ever=patients.with_these_clinical_events(
+     combine_codelists( # FIXME - ask Colm about new codelists
+       codelists_cohortextractor.covid_primary_care_code,
+       codelists_cohortextractor.covid_primary_care_positive_test,
+       codelists_cohortextractor.covid_primary_care_sequelae,
+     ),
+     returning="binary_flag",
+     on_or_before="index_date",
+     find_first_match_in_period=True,
+   ),
+   
+   # emergency attendance for covid
+   covidemergency_ever=patients.attended_emergency_care(
+     returning="binary_flag",
+     on_or_before="index_date",
+     with_these_diagnoses = codelists_cohortextractor.covid_emergency,
+     find_first_match_in_period=True,
+   ),
+   
+   # covid admission
+   covidadmitted_ever=patients.admitted_to_hospital(
+     returning="binary_flag",
+     with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"],
+     with_these_diagnoses=codelists_cohortextractor.covid_icd10,
+     on_or_before="index_date",
+     find_first_match_in_period=True,
+   ),
+   
+   # 
+   any_infection_or_disease_ever=patients.satisfying(
+     """
+     postest_ever
+     OR primary_care_covid_case_ever
+     OR covidemergency_ever
+     OR covidadmitted_ever
+     """
+   )
   
 )
 
