@@ -131,14 +131,14 @@ dataset.any_infection_or_disease_01 = (
 
 # Positive COVID test
 dataset.postest_14 = prior_tests.take(
-    (prior_tests.specimen_taken_date >= (index_date - timedelta(days=14)))
+    (prior_tests.specimen_taken_date >= (index_date - timedelta(days=13)))
     & (prior_tests.specimen_taken_date <= index_date)
     & (prior_tests.is_positive)
 ).exists_for_patient()
 
 # Positive case identification
 dataset.primary_care_covid_case_14 = primary_care_covid_events.take(
-    (clinical_events.date >= (index_date - timedelta(days=14)))
+    (clinical_events.date >= (index_date - timedelta(days=13)))
     & (clinical_events.date <= index_date)
 ).exists_for_patient()
 
@@ -148,7 +148,7 @@ dataset.covidemergency_14 = (
         emergency_care_attendances, codelists_ehrql.covid_emergency
     )
     .take(
-        (emergency_care_attendances.arrival_date >= (index_date - timedelta(days=14)))
+        (emergency_care_attendances.arrival_date >= (index_date - timedelta(days=13)))
         & (emergency_care_attendances.arrival_date <= index_date)
     )
     .exists_for_patient()
@@ -158,7 +158,7 @@ dataset.covidemergency_14 = (
 dataset.covidadmitted_14 = (
     hospitalisation_diagnosis_matches(hospital_admissions, codelists_ehrql.covid_icd10)
     .take(
-        (hospital_admissions.admission_date >= (index_date - timedelta(days=14)))
+        (hospital_admissions.admission_date >= (index_date - timedelta(days=13)))
         & (hospital_admissions.admission_date <= index_date)
     )
     .take(
