@@ -1,14 +1,27 @@
-# -cis-pop-validation-ehrql
+# cis-pop-validation-ehrql
 
-This is the code and configuration for -cis-pop-validation-ehrql.
+This project translates parts of the original [CIS-pop-validation](https://github.com/opensafely/CIS-pop-validation) study written using [cohort-extractor](https://github.com/opensafely-core/cohort-extractor) into [ehrQL (Electronic Health Record Query Language](https://docs.opensafely.org/ehrql-intro/) using [databuilder](https://github.com/opensafely-core/databuilder).
+The aim of this project is to compare the populations defined by each method (`cohort-extractor` vs `databuilder`).
 
-You can run this project via [Gitpod](https://gitpod.io) in a web browser by clicking on this badge: [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-908a85?logo=gitpod)](https://gitpod.io/#https://github.com/opensafely/-cis-pop-validation-ehrql)
+## Project navigation
 
-* The paper is [here]()
-* Raw model outputs, including charts, crosstabs, etc, are in `released_outputs/`
-* If you are interested in how we defined our variables, take a look at the [study definition](analysis/study_definition.py); this is written in `python`, but non-programmers should be able to understand what is going on there
-* If you are interested in how we defined our code lists, look in the [codelists folder](./codelists/).
-* Developers and epidemiologists interested in the framework should review [the OpenSAFELY documentation](https://docs.opensafely.org)
+### cohort-extractor implementation
+
+- Study definition: [analysis/study_definition.py](analysis/study_definition.py)
+- Clinical codes: [analysis/codelists_cohortextractor.py](analysis/codelists_cohortextractor.py)
+
+### ehrQL translation
+
+- Dataset definition: [analysis/dataset_definition.py](analysis/dataset_definition.py)
+- Clinical codes: [analysis/codelists_ehrql.py](analysis/codelists_ehrql.py)
+
+### Analysis of differences 
+
+- Analysis script: [analysis/dataset_diff.R](analysis/dataset_diff.R)
+
+### Dummy data
+
+The dummy data in [dummy_data/](dummy_data/) was manually defined to test whether the results of the dataset definition are as expected (see [tests/test_datasets.py](tests/test_datasets.py)).
 
 # About the OpenSAFELY framework
 

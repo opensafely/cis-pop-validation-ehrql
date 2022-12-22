@@ -7,10 +7,10 @@ from databuilder.tables.beta import tpp as schema
 from databuilder.codes import Codelist
 
 
-def has_prior_event(prior_events, codelist, where=True):
+def has_matching_event(events, codelist, where=True):
     return (
-        prior_events.take(where)
-        .take(prior_events.snomedct_code.is_in(codelist))
+        events.take(where)
+        .take(events.snomedct_code.is_in(codelist))
         .exists_for_patient()
     )
 
@@ -27,12 +27,12 @@ def any_of(conditions):
 
 
 def age_as_of(date):
-    return schema.patients.date_of_birth.difference_in_years(date)
+    return (date - schema.patients.date_of_birth).years
 
 
 # TODO this is not exactly the same as died_from_any_cause().
 # Note that this function only checks the patient table
-def has_died(date):
+def died_as_of(date):
     return schema.patients.date_of_death.is_not_null() & (
         schema.patients.date_of_death < date
     )
@@ -48,16 +48,18 @@ def address_as_of(date):
     # Logic copied from:
     # https://github.com/opensafely-core/cohort-extractor/blob/e77a0aa2/cohortextractor/tpp_backend.py#L1756-L1773
     ordered = active.sort_by(
-        # Prefer the address which was registered first
+        # Prefer the most recently registered address
         addr.start_date,
         # Prefer the address registered for longest
         addr.end_date,
         # Prefer addresses with a postcode
         case(when(addr.has_postcode).then(1), default=0),
-        # Use the opaque ID as a tie-breaker for sort stability
-        addr.address_id,
+        # Use the opaque ID as a tie-breaker for sort stability (we invert this simply
+        # so the order matches the original order defined in Cohort Extractor to
+        # facilitate direct comparison)
+        -addr.address_id,
     )
-    return ordered.first_for_patient()
+    return ordered.last_for_patient()
 
 
 def _registrations_overlapping_period(start_date, end_date):

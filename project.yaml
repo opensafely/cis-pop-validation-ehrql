@@ -5,13 +5,35 @@ expectations:
 
 actions:
 
-  generate_dataset:
-    # The final line of arguments are workarounds for the fact that we don't
-    # have dummy data working yet, so don't worry about exactly what they're
-    # doing.
-    run: databuilder:v0
-      generate-dataset analysis/dataset_definition.py --output output/dataset.csv
-      --dsn dummy_data --query-engine csv --backend databuilder.backends.base.DefaultBackend
+  generate_dataset_cohortextractor:
+    run: >
+      cohortextractor:latest generate_cohort 
+        --study-definition study_definition
+        --output-dir 'output'
+        --output-file "output/dataset_cohortextractor_2022-09-25.csv"
+        --output-format csv
     outputs:
       highly_sensitive:
-        cohort: output/dataset.csv
+        cohort: output/dataset_cohortextractor_2022-09-25.csv
+
+  generate_dataset_ehrql:
+    run: >
+      databuilder:v0
+        generate-dataset analysis/dataset_definition.py 
+        --output output/dataset_ehrql_2022-09-25.csv
+        --dummy-tables dummy_data
+    outputs:
+      highly_sensitive:
+        cohort: output/dataset_ehrql_2022-09-25.csv
+ 
+  calculate_dataset_diff:
+    run: >
+      r:latest analysis/dataset_diff.R
+    needs:
+      - generate_dataset_cohortextractor
+      - generate_dataset_ehrql
+    outputs:
+      moderately_sensitive:
+        summary: output/diff/dataset_diff_summary.csv
+        by_care_home_tpp: output/diff/dataset_diff_care_home_tpp.csv
+        by_sex: output/diff/dataset_diff_sex.csv
