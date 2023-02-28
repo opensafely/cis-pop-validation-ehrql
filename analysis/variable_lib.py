@@ -4,7 +4,6 @@ from functools import reduce
 from databuilder.codes import ICD10Code
 from databuilder.ehrql import case, when
 from databuilder.tables.beta import tpp as schema
-from databuilder.codes import Codelist
 
 
 def has_matching_event(events, codelist, where=True):
@@ -13,13 +12,6 @@ def has_matching_event(events, codelist, where=True):
         .take(events.snomedct_code.is_in(codelist))
         .exists_for_patient()
     )
-
-
-def combine_codelists(*codelists):
-    codes = set()
-    for codelist in codelists:
-        codes.update(codelist.codes)
-    return Codelist(codes=codes, category_maps={})
 
 
 def any_of(conditions):
@@ -84,10 +76,12 @@ def emergency_care_diagnosis_matches(emergency_care_attendances, codelist):
 
 
 def hospitalisation_diagnosis_matches(admissions, codelist):
-    code_strings = []
-    for code in codelist.codes:
-        assert isinstance(code, ICD10Code)
-        code_strings.append(code._to_primitive_type())
+    code_strings = set()
+    for code in codelist:
+        # Pass the string through the ICD10Code to constructor to validate that it has
+        # the expected format
+        code_string = ICD10Code(code)._to_primitive_type()
+        code_strings.add(code_string)
     conditions = [
         # The reason a plain substring search like this works is twofold:
         #
@@ -104,7 +98,7 @@ def hospitalisation_diagnosis_matches(admissions, codelist):
         # Obviously this is all far from ideal though, and later we hope to be able
         # to pull these codes out in a separate table and handle the matching
         # properly.
-        admissions.all_diagnoses.contains(code_str)
-        for code_str in code_strings
+        admissions.all_diagnoses.contains(code_string)
+        for code_string in code_strings
     ]
     return admissions.take(any_of(conditions))
