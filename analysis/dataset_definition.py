@@ -14,7 +14,6 @@ from databuilder.tables.beta.tpp import (
 import codelists_ehrql
 from variable_lib import (
     has_matching_event,
-    combine_codelists,
     address_as_of,
     age_as_of,
     emergency_care_diagnosis_matches,
@@ -40,11 +39,9 @@ hospital_admission_methods = [
 # Containing primary care covid events
 primary_care_covid_events = clinical_events.take(
     clinical_events.ctv3_code.is_in(
-        combine_codelists(
-            codelists_ehrql.covid_primary_care_code,
-            codelists_ehrql.covid_primary_care_positive_test,
-            codelists_ehrql.covid_primary_care_sequelae,
-        )
+        codelists_ehrql.covid_primary_care_code
+        + codelists_ehrql.covid_primary_care_positive_test
+        + codelists_ehrql.covid_primary_care_sequelae
     )
 )
 
