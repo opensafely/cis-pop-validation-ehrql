@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
-from databuilder.ehrql import Dataset, case, when
-from databuilder.tables.beta.tpp import (
+from ehrql import create_dataset, case, when
+from ehrql.tables.beta.tpp import (
     clinical_events,
     emergency_care_attendances,
     hospital_admissions,
@@ -51,7 +51,7 @@ primary_care_covid_events = clinical_events.where(
 index_date = date(2022, 9, 25)
 
 # Create dataset
-dataset = Dataset()
+dataset = create_dataset()
 
 ###############################################################################
 # Preprocessing data for later use
@@ -70,7 +70,10 @@ prior_tests = sgss_covid_all_tests.where(
 # Demographic variables
 dataset.sex = patients.sex
 dataset.age = age_as_of(index_date)
-dataset.has_died = ons_deaths.where(ons_deaths.date <= index_date).exists_for_patient()
+dataset.has_died = case(
+    when(ons_deaths.date <= index_date).then(True),
+    default=None,
+)
 
 # TPP care home flag
 dataset.care_home_tpp = address.care_home_is_potential_match.if_null_then(False)
